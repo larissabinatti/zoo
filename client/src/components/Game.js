@@ -38,7 +38,7 @@ const Game = (props) => {
     const [users, setUsers] = useState([])
     const [currentUser, setCurrentUser] = useState('')
     const [message, setMessage] = useState('')
-    const [messages, setMessages] = useState([])
+    // const [messages, setMessages] = useState([])
 
     useEffect(() => {
         const connectionOptions =  {
@@ -166,12 +166,12 @@ const Game = (props) => {
             setCurrentUser(name)
         })
 
-        socket.on('message', message => {
-            setMessages(messages => [ ...messages, message ])
+        // socket.on('message', message => {
+        //     setMessages(messages => [ ...messages, message ])
 
-            const chatBody = document.querySelector('.chat-body')
-            chatBody.scrollTop = chatBody.scrollHeight
-        })
+        //     const chatBody = document.querySelector('.chat-body')
+        //     chatBody.scrollTop = chatBody.scrollHeight
+        // })
     }, [])
 
     //some util functions
@@ -183,17 +183,17 @@ const Game = (props) => {
         return arr.length === 1 ? player : ''
     }
 
-    const toggleChatBox = () => {
-        const chatBody = document.querySelector('.chat-body')
-        if(isChatBoxHidden) {
-            chatBody.style.display = 'block'
-            setChatBoxHidden(false)
-        }
-        else {
-            chatBody.style.display = 'none'
-            setChatBoxHidden(true)
-        }
-    }
+    // const toggleChatBox = () => {
+    //     const chatBody = document.querySelector('.chat-body')
+    //     if(isChatBoxHidden) {
+    //         chatBody.style.display = 'block'
+    //         setChatBoxHidden(false)
+    //     }
+    //     else {
+    //         chatBody.style.display = 'none'
+    //         setChatBoxHidden(true)
+    //     }
+    // }
 
     const sendMessage= (event) => {
         event.preventDefault()
@@ -1352,7 +1352,7 @@ const Game = (props) => {
                             ))}
                         </div>
 
-                        <div className="chatBoxWrapper">
+                        {/* <div className="chatBoxWrapper">
                             <div className="chat-box chat-box-player2">
                                 <div className="chat-head">
                                     <h2>Chat Box</h2>
@@ -1374,7 +1374,8 @@ const Game = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        </div> </> }
+                        </div> */}
+                        </> }
                     </div> }
                 </> }
             </> : <h1>Room full</h1> }
