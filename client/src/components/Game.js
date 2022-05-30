@@ -1,3 +1,6 @@
+/* eslint-disable no-lone-blocks */
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable default-case */
 import React, { useEffect, useState } from 'react'
 import PACK_OF_CARDS from '../utils/packOfCards'
 import shuffleArray from '../utils/shuffleArray'
@@ -15,6 +18,7 @@ import wildCardSound from '../assets/sounds/wild-sound.mp3'
 import draw4CardSound from '../assets/sounds/draw4-sound.mp3'
 import gameOverSound from '../assets/sounds/game-over-sound.mp3'
 
+import Header from './Header';
 //NUMBER CODES FOR ACTION CARDS
 //SKIP - 404
 //DRAW 2 - 252
@@ -22,8 +26,8 @@ import gameOverSound from '../assets/sounds/game-over-sound.mp3'
 //DRAW 4 WILD - 600
 
 let socket
-// const ENDPOINT = 'http://localhost:5000'
-const ENDPOINT = 'https://uno-online-multiplayer.herokuapp.com/'
+const ENDPOINT = 'http://localhost:5000'
+//const ENDPOINT = 'https://uno-online-multiplayer.herokuapp.com/'
 
 const Game = (props) => {
     const data = queryString.parse(props.location.search)
@@ -1216,27 +1220,28 @@ const Game = (props) => {
     }
     
     return (
-        <div className={`Game backgroundColorR backgroundColor${currentColor}`}>
+        <div className={`Game`}>
+            <Header/>
             {(!roomFull) ? <>
 
                 <div className='topInfo'>
-                    <img src={require('../assets/logo.png').default} />
-                    <h1>Game Code: {room}</h1>
+                    {/* <img src={require('../assets/logo-zoo.png').default} /> */}
+                    <h1>Código da partida: {room}</h1>
                     <span>
-                        <button className='game-button green' onClick={() => setSoundMuted(!isSoundMuted)}>{isSoundMuted ? <span className="material-icons">volume_off</span> : <span className="material-icons">volume_up</span>}</button>
-                        <button className='game-button green' onClick={() => {
+                        {/* <button className='game-button green' onClick={() => setSoundMuted(!isSoundMuted)}>{isSoundMuted ? <span className="material-icons">volume_off</span> : <span className="material-icons">volume_up</span>}</button> */}
+                        {/* <button className='game-button green' onClick={() => {
                             if(isMusicMuted)
                                 playBBgMusic()
                             else
                                 pause()
                             setMusicMuted(!isMusicMuted)
-                        }}>{isMusicMuted ? <span className="material-icons">music_off</span> : <span className="material-icons">music_note</span>}</button>
+                        }}>{isMusicMuted ? <span className="material-icons">music_off</span> : <span className="material-icons">music_note</span>}</button> */}
                     </span>
                 </div>
 
                 {/* PLAYER LEFT MESSAGES */}
                 {users.length===1 && currentUser === 'Player 2' && <h1 className='topInfoText'>Player 1 has left the game.</h1> }
-                {users.length===1 && currentUser === 'Player 1' && <h1 className='topInfoText'>Waiting for Player 2 to join the game.</h1> }
+                {users.length===1 && currentUser === 'Player 1' && <h1 className='topInfoText'>Aguardando jogador 2 juntar-se a partida.</h1> }
 
                 {users.length===2 && <>
 
@@ -1282,7 +1287,7 @@ const Game = (props) => {
                             ))}
                         </div>
 
-                        <div className="chatBoxWrapper">
+                        {/* <div className="chatBoxWrapper">
                             <div className="chat-box chat-box-player1">
                                 <div className="chat-head">
                                     <h2>Chat Box</h2>
@@ -1304,7 +1309,8 @@ const Game = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        </div> </> }
+                        </div>  */}
+                        </> }
 
                         {/* PLAYER 2 VIEW */}
                         {currentUser === 'Player 2' && <>
@@ -1374,7 +1380,7 @@ const Game = (props) => {
             </> : <h1>Room full</h1> }
 
             <br />
-            <a href='/'><button className="game-button red">QUIT</button></a>
+            <a href='/'><button type="button" class="btn btn-danger">Sair</button></a>
         </div>
     )
 }

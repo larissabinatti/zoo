@@ -79,6 +79,7 @@ a {
   background-size: cover;
   margin: 0;
   height: 100vh;
+  color: black;
 }
 
 /* Game.js Background */
@@ -98,6 +99,11 @@ a {
   background-image: url('./assets/backgrounds/bgY.png');
 }
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /* UNO Cards */
 .Card {
   width: 6rem;
@@ -109,7 +115,7 @@ a {
 .topInfo {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 60px;
   height: 100px;
 }
