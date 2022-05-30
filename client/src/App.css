@@ -1,15 +1,45 @@
 .App {
   text-align: center;
+  font-family: 'Montserrat', sans-serif;
 }
 
 a {
   color: #ffffff;
 }
 
+.rule-modal {
+  color: black;
+}
+
+.modal-body {
+  text-align: left;
+}
+
+.or {
+  color: black;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.game-input {
+  margin-right: 10px;
+  border-radius: 6px !important;
+}
+
+.main-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerbar {
+  font-family:  'Montserrat', sans-serif;
+}
+
 /* Homepage */
 .Homepage {
-  background-image: url('./assets/Landing-Page.gif');
-  background-size: cover;
+  background: white;
   margin: 0;
   height: 100vh;
 }
@@ -17,6 +47,10 @@ a {
 .homepage-menu {
   position: relative;
   top: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .homepage-form {
@@ -151,7 +185,7 @@ a {
   cursor: pointer;
   text-decoration: none !important;
   outline: none !important;
-  font-family: 'Carter One', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   line-height: 1.5em;
   letter-spacing: .1em;
