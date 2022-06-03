@@ -3,6 +3,7 @@
 /* eslint-disable default-case */
 import React, { useEffect, useState } from 'react'
 import PACK_OF_CARDS from '../utils/packOfCards'
+import PACK_OF_ORIGIN_CARDS from '../utils/originCards'
 import shuffleArray from '../utils/shuffleArray'
 import io from 'socket.io-client'
 import queryString from 'query-string'
@@ -68,10 +69,14 @@ const Game = (props) => {
     const [turn, setTurn] = useState('')
     const [player1Deck, setPlayer1Deck] = useState([])
     const [player2Deck, setPlayer2Deck] = useState([])
-    const [currentColor, setCurrentColor] = useState('')
-    const [currentNumber, setCurrentNumber] = useState('')
+    const [player1Origin, setPlayer1Origin] = useState('')
+    const [player2Origin, setPlayer2Origin] = useState('')
+    const [currentColor, setCurrentColor] = useState('') //grupo animal
+    const [currentNumber, setCurrentNumber] = useState('') //tipo de predacao
     const [playedCardsPile, setPlayedCardsPile] = useState([])
     const [drawCardPile, setDrawCardPile] = useState([])
+    const [origin1TimesUsed, setOrigin1TimesUsed] = useState(0)
+    const [origin2TimesUsed, setOrigin2TimesUsed] = useState(0)
 
     const [isChatBoxHidden, setChatBoxHidden] = useState(true)
     const [isUnoButtonPressed, setUnoButtonPressed] = useState(false)
@@ -91,16 +96,22 @@ const Game = (props) => {
     useEffect(() => {
         //shuffle PACK_OF_CARDS array
         const shuffledCards = shuffleArray(PACK_OF_CARDS)
-
+        const shuffledOriginCards = shuffleArray(PACK_OF_ORIGIN_CARDS)
+        
         //extract first 7 elements to player1Deck
         const player1Deck = shuffledCards.splice(0, 7)
+        //extract 1 origin card
+        const player1Origin = shuffledOriginCards.splice(0, 1)
 
         //extract first 7 elements to player2Deck
         const player2Deck = shuffledCards.splice(0, 7)
+        //extract 1 origin card
+        const player2Origin = shuffledOriginCards.splice(0, 1)
 
         //extract random card from shuffledCards and check if its not an action card
         let startingCardIndex
         while(true) {
+            // TROCAR AS CARTAS PARA O NOVO DECK DE CARTAS DE ZOO E TROCAR O 94 PRO NUMERO DE CARTAS QUE SOBRAM SEM AS ESPECIAIS
             startingCardIndex = Math.floor(Math.random() * 94)
             if(shuffledCards[startingCardIndex]==='skipR' || shuffledCards[startingCardIndex]==='_R' || shuffledCards[startingCardIndex]==='D2R' ||
             shuffledCards[startingCardIndex]==='skipG' || shuffledCards[startingCardIndex]==='_G' || shuffledCards[startingCardIndex]==='D2G' ||
@@ -125,6 +136,10 @@ const Game = (props) => {
             turn: 'Player 1',
             player1Deck: [...player1Deck],
             player2Deck: [...player2Deck],
+            player1Origin: player1Origin,
+            player2Origin: player2Origin,
+            origin1TimesUsed: origin1TimesUsed,
+            origin2TimesUsed: origin2TimesUsed,
             currentColor: playedCardsPile[0].charAt(1),
             currentNumber: playedCardsPile[0].charAt(0),
             playedCardsPile: [...playedCardsPile],
@@ -133,18 +148,22 @@ const Game = (props) => {
     }, [])
 
     useEffect(() => {
-        socket.on('initGameState', ({ gameOver, turn, player1Deck, player2Deck, currentColor, currentNumber, playedCardsPile, drawCardPile }) => {
+        socket.on('initGameState', ({ gameOver, turn, player1Deck, player2Deck, currentColor, currentNumber, playedCardsPile, drawCardPile, player1Origin, player2Origin, origin1TimesUsed, origin2TimesUsed }) => {
             setGameOver(gameOver)
             setTurn(turn)
             setPlayer1Deck(player1Deck)
             setPlayer2Deck(player2Deck)
+            setPlayer1Origin(player1Origin)
+            setPlayer2Origin(player2Origin)
             setCurrentColor(currentColor)
             setCurrentNumber(currentNumber)
             setPlayedCardsPile(playedCardsPile)
             setDrawCardPile(drawCardPile)
+            setOrigin1TimesUsed(origin1TimesUsed)
+            setOrigin2TimesUsed(origin2TimesUsed)
         })
 
-        socket.on('updateGameState', ({ gameOver, winner, turn, player1Deck, player2Deck, currentColor, currentNumber, playedCardsPile, drawCardPile }) => {
+        socket.on('updateGameState', ({ gameOver, winner, turn, player1Deck, player2Deck, currentColor, currentNumber, playedCardsPile, drawCardPile, player1Origin, player2Origin, origin1TimesUsed, origin2TimesUsed   }) => {
             gameOver && setGameOver(gameOver)
             gameOver===true && playGameOverSound()
             winner && setWinner(winner)
@@ -155,6 +174,10 @@ const Game = (props) => {
             currentNumber && setCurrentNumber(currentNumber)
             playedCardsPile && setPlayedCardsPile(playedCardsPile)
             drawCardPile && setDrawCardPile(drawCardPile)
+            player1Origin && setPlayer1Origin(player1Origin)
+            player2Origin && setPlayer2Origin(player2Origin)
+            origin1TimesUsed && setOrigin1TimesUsed(origin1TimesUsed)
+            origin2TimesUsed && setOrigin2TimesUsed(origin2TimesUsed)
             setUnoButtonPressed(false)
         })
 
@@ -1248,7 +1271,16 @@ const Game = (props) => {
                     {gameOver ? <div>{winner !== '' && <><h1>GAME OVER</h1><h2>{winner} wins!</h2></>}</div> :
                     <div>
                         {/* PLAYER 1 VIEW */}
-                        {currentUser === 'Player 1' && <>    
+                        {currentUser === 'Player 1' && <>
+                        <div className='originRow justify-content-evenly'>
+                            <span className='fs-4'>Carta de Origem:</span>
+                            {playedCardsPile && playedCardsPile.length>0 &&
+                                <img
+                                className='CardOrigin'
+                                onClick={() => onCardPlayedHandler(player2Origin)}
+                                src={require(`../assets/origin-cards/${player2Origin}.png`).default}
+                                /> }  
+                        </div>    
                         <div className='player2Deck' style={{pointerEvents: 'none'}}>
                             <p className='playerDeckText'>Player 2</p>
                             {player2Deck.map((item, i) => (
@@ -1269,6 +1301,7 @@ const Game = (props) => {
                                 className='Card'
                                 src={require(`../assets/cards-front/${playedCardsPile[playedCardsPile.length-1]}.png`).default}
                                 /> }
+                            
                             <button className='game-button orange' disabled={player1Deck.length !== 2} onClick={() => {
                                 setUnoButtonPressed(!isUnoButtonPressed)
                                 playUnoSound()
@@ -1284,36 +1317,31 @@ const Game = (props) => {
                                     onClick={() => onCardPlayedHandler(item)}
                                     src={require(`../assets/cards-front/${item}.png`).default}
                                     />
-                            ))}
+                            ))}     
                         </div>
-
-                        {/* <div className="chatBoxWrapper">
-                            <div className="chat-box chat-box-player1">
-                                <div className="chat-head">
-                                    <h2>Chat Box</h2>
-                                    {!isChatBoxHidden ?
-                                    <span onClick={toggleChatBox} class="material-icons">keyboard_arrow_down</span> :
-                                    <span onClick={toggleChatBox} class="material-icons">keyboard_arrow_up</span>}
-                                </div>
-                                <div className="chat-body">
-                                    <div className="msg-insert">
-                                        {messages.map(msg => {
-                                            if(msg.user === 'Player 2')
-                                                return <div className="msg-receive">{msg.text}</div>
-                                            if(msg.user === 'Player 1')
-                                                return <div className="msg-send">{msg.text}</div>
-                                        })}
-                                    </div>
-                                    <div className="chat-text">
-                                        <input type='text' placeholder='Type a message...' value={message} onChange={event => setMessage(event.target.value)} onKeyPress={event => event.key==='Enter' && sendMessage(event)} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  */}
+                        <div className='col originRow'>
+                            <span className='fs-4'>Carta de Origem:</span>
+                            {playedCardsPile && playedCardsPile.length>0 &&
+                                <img
+                                className='CardOrigin'
+                                onClick={() => onCardPlayedHandler(player1Origin)}
+                                src={require(`../assets/origin-cards/${player1Origin}.png`).default}
+                                /> }
+                            <button type="button" class="btn btn-dark pl-2">Usar efeito</button>
+                        </div>
                         </> }
 
                         {/* PLAYER 2 VIEW */}
                         {currentUser === 'Player 2' && <>
+                        <div className='col originRow justify-content-evenly'>
+                            <span className='fs-4'>Carta de Origem:</span>
+                            {playedCardsPile && playedCardsPile.length>0 &&
+                                <img
+                                className='CardOrigin'
+                                onClick={() => onCardPlayedHandler(player1Origin)}
+                                src={require(`../assets/origin-cards/${player1Origin}.png`).default}
+                                /> }
+                        </div>
                         <div className='player1Deck' style={{pointerEvents: 'none'}}>
                             <p className='playerDeckText'>Player 1</p>
                             {player1Deck.map((item, i) => (
@@ -1334,6 +1362,7 @@ const Game = (props) => {
                                 className='Card'
                                 src={require(`../assets/cards-front/${playedCardsPile[playedCardsPile.length-1]}.png`).default}
                                 /> }
+                            
                             <button className='game-button orange' disabled={player2Deck.length !== 2} onClick={() => {
                                 setUnoButtonPressed(!isUnoButtonPressed)
                                 playUnoSound()
@@ -1351,30 +1380,17 @@ const Game = (props) => {
                                     />
                             ))}
                         </div>
-
-                        {/* <div className="chatBoxWrapper">
-                            <div className="chat-box chat-box-player2">
-                                <div className="chat-head">
-                                    <h2>Chat Box</h2>
-                                    {!isChatBoxHidden ?
-                                    <span onClick={toggleChatBox} class="material-icons">keyboard_arrow_down</span> :
-                                    <span onClick={toggleChatBox} class="material-icons">keyboard_arrow_up</span>}
-                                </div>
-                                <div className="chat-body">
-                                    <div className="msg-insert">
-                                        {messages.map(msg => {
-                                            if(msg.user === 'Player 1')
-                                                return <div className="msg-receive">{msg.text}</div>
-                                            if(msg.user === 'Player 2')
-                                                return <div className="msg-send">{msg.text}</div>
-                                        })}
-                                    </div>
-                                    <div className="chat-text">
-                                        <input type='text' placeholder='Type a message...' value={message} onChange={event => setMessage(event.target.value)} onKeyPress={event => event.key==='Enter' && sendMessage(event)} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
+                        <div className='col originRow'>
+                            <span className='fs-3'>Carta de Origem:</span>
+                            
+                            {playedCardsPile && playedCardsPile.length>0 &&
+                                <img
+                                className='CardOrigin'
+                                onClick={() => onCardPlayedHandler(player2Origin)}
+                                src={require(`../assets/origin-cards/${player2Origin}.png`).default}
+                                /> }
+                            <button type="button" class="btn btn-dark pl-2">Usar efeito</button>
+                        </div>
                         </> }
                     </div> }
                 </> }
