@@ -260,13 +260,20 @@ const Game = (props) => {
             else{
                 var times2Used = origin2TimesUsed;
                 times2Used++;
-                console.log("times used 2:", times2Used);
-                socket.emit('updateGameState', {
-                    gameOver: checkGameOver(player2Deck),
-                    winner: checkWinner(player2Deck, 'Player 2'),
-                    turn: 'Player 1',
-                    origin2TimesUsed: times2Used
-                })
+                if(played_card === 'OR1') {
+                    //glandulas mamarias
+                    console.log("glandulas")
+                    socket.emit('updateGameState', {
+                        origin2TimesUsed: times2Used
+                    })
+                    if(timesUsed <= 3) {
+                        console.log("da pra tirar");
+                    }
+                    else {
+                        //desabilitar botao no front e dar algum feedback tipo nao mostrar mais carta origem
+                        console.log("limite maximo de uso alcancado");
+                    }
+                }
             }
         }
         else {
@@ -1084,30 +1091,25 @@ const Game = (props) => {
 
 
     const onCardDrawnOR1Handler = (played_card) => {
-        //document.getElementById("staticBackdrop").style.display = "none";
-        console.log("entrou no handler");
-        const removeIndex = player1Deck.indexOf(played_card)
-        var player1NewDeck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)];
-        console.log("p1 deck", player1NewDeck);
         //extract player who drew the card
         const cardDrawnBy = turn
-        console.log("turn", turn);
+
         //check who drew the card and return new state accordingly
         if(cardDrawnBy === 'Player 1') {
-            console.log("p1");
+            const removeIndex = player1Deck.indexOf(played_card)
+            var player1NewDeck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)];
             //remove 1 new card from drawCardPile and add it to player1's deck (immutably)
             //make a copy of drawCardPile array
             const copiedDrawCardPileArray = [...drawCardPile]
-            console.log("1: ", copiedDrawCardPileArray);
+
             //pull out last element from it
             const drawCard = copiedDrawCardPileArray.pop()
-            console.log("2:", drawCard);
+
             //extract number and color of drawn card
             const colorOfDrawnCard = drawCard.charAt(drawCard.length - 1)
-            console.log("3:", colorOfDrawnCard);
+
             let numberOfDrawnCard = drawCard.charAt(0)
-            console.log("4:", numberOfDrawnCard);
-            console.log("pre ifs");
+
             if(colorOfDrawnCard === currentColor && (drawCard === 'skipR' || drawCard === 'skipG' || drawCard === 'skipB' || drawCard === 'skipY')) {
                 console.log("if1");
                 alert(`You drew ${drawCard}. It was played for you.`)
@@ -1215,6 +1217,9 @@ const Game = (props) => {
             }
         }
         else {
+            const remove2Index = player2Deck.indexOf(played_card)
+            var player2NewDeck = [...player2Deck.slice(0, remove2Index), ...player2Deck.slice(remove2Index + 1)];
+            console.log("p2 deck before", player2NewDeck);
             //remove 1 new card from drawCardPile and add it to player2's deck (immutably)
             //make a copy of drawCardPile array
             const copiedDrawCardPileArray = [...drawCardPile]
@@ -1225,17 +1230,21 @@ const Game = (props) => {
             let numberOfDrawnCard = drawCard.charAt(0)
             if(colorOfDrawnCard === currentColor && (drawCard === 'skipR' || drawCard === 'skipG' || drawCard === 'skipB' || drawCard === 'skipY')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
+                console.log("p2 if1");
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
                 socket.emit('updateGameState', {
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     currentColor: colorOfDrawnCard,
                     currentNumber: 404,
-                    drawCardPile: [...copiedDrawCardPileArray]
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    turn: 'Player 2',
+                    player1Deck: player2NewDeck,
                 })
             }
             else if(colorOfDrawnCard === currentColor && (drawCard === 'D2R' || drawCard === 'D2G' || drawCard === 'D2B' || drawCard === 'D2Y')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
+                console.log("p2 if2");
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1249,17 +1258,22 @@ const Game = (props) => {
                     player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
                     currentColor: colorOfDrawnCard,
                     currentNumber: 252,
-                    drawCardPile: [...copiedDrawCardPileArray]
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    turn: 'Player 2',
+                    player1Deck: player2NewDeck,
                 })
             }
+            //CHECAR SE ESTA CERTO O JOGADOR QUE DEVE JOGAR
             else if(drawCard === 'W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
+                console.log("p2 if3");
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 !isSoundMuted && playWildCardSound()
                 //send new state to server
                 socket.emit('updateGameState', {
-                    turn: 'Player 1',
+                    turn: 'Player 2',
+                    player2Deck: player1NewDeck,
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     currentColor: newColor,
                     currentNumber: 300,
@@ -1268,6 +1282,7 @@ const Game = (props) => {
             }
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
+                console.log("p2 if4");
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
@@ -1285,29 +1300,34 @@ const Game = (props) => {
                     player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
                     currentColor: newColor,
                     currentNumber: 600,
-                    drawCardPile: [...copiedDrawCardPileArray]
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    turn: 'Player 2',
+                    player1Deck: player2NewDeck
                 })
             }
             //if not action card - check if drawn card is playable
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
+                console.log("p2 if5");
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
                 socket.emit('updateGameState', {
-                    turn: 'Player 1',
+                    turn: 'Player 2',
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     currentColor: colorOfDrawnCard,
                     currentNumber: numberOfDrawnCard,
-                    drawCardPile: [...copiedDrawCardPileArray]
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    player2Deck: player2NewDeck,
                 })
             }
             //else add the drawn card to player2's deck
             else {
                 !isSoundMuted && playShufflingSound()
+                console.log("p2 if4");
                 //send new state to server
                 socket.emit('updateGameState', {
-                    turn: 'Player 1',
-                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard, ...player2Deck.slice(player2Deck.length)],
+                    turn: 'Player 2',
+                    player2Deck: [...player2NewDeck.slice(0, player2Deck.length), drawCard, ...player2NewDeck.slice(player2Deck.length)],
                     drawCardPile: [...copiedDrawCardPileArray]
                 })
             }
@@ -1548,8 +1568,11 @@ const Game = (props) => {
                         
                         {/* PLAYER 1 VIEW */}
                         {currentUser === 'Player 1' && <>
-                        <div className='originRow justify-content-evenly'>
-                            <span className='fs-4'>Carta de Origem:</span>
+                        <div className='col originRow'>
+                            <div className='d-flex origin-text'>
+                                <span className='fs-4'>Carta de Origem:</span>
+                                <span className='fs-6'>Quantas vezes foi usada: {origin2TimesUsed}</span>            
+                            </div>
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
                                 className='CardOrigin'
@@ -1596,11 +1619,11 @@ const Game = (props) => {
                             ))}     
                         </div>
 
-                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal fade" id="OR1modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="OR1modalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="staticBackdropLabel">Selecione carta a descartar:</h5>
+                                        <h5 class="modal-title" id="OR1modalLabel">Selecione carta a descartar:</h5>
                                     </div>
                                     <div class="modal-body">
                                         {player1Deck.filter(word => word.includes("R")).length > 0 && <>
@@ -1622,7 +1645,11 @@ const Game = (props) => {
 
 
                         <div className='col originRow'>
-                            <span className='fs-4'>Carta de Origem:</span>
+                            <div className='d-flex origin-text'>
+                                <span className='fs-4'>Carta de Origem:</span>
+                                <span className='fs-6'>Quantas vezes foi usada: {origin1TimesUsed}</span>            
+                            </div>
+                            
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
                                 className='CardOrigin'
@@ -1631,8 +1658,8 @@ const Game = (props) => {
                                 {turn !== 'Player 1' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player1Origin)}>Usar efeito</button>
                                 }
-                                {turn === 'Player 1' && origin1TimesUsed <= 3 &&
-                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player1Origin)} data-bs-toggle="modal" data-bs-target="#staticBackdrop">Usar efeito</button>
+                                {turn === 'Player 1' && origin1TimesUsed <= 3 && player1Deck.filter(word => word.includes("R")).length > 0 &&
+                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player1Origin)} data-bs-toggle="modal" data-bs-target="#OR1modal">Usar efeito</button>
                                 }
                         </div>
                         </> }
@@ -1640,7 +1667,10 @@ const Game = (props) => {
                         {/* PLAYER 2 VIEW */}
                         {currentUser === 'Player 2' && <>
                         <div className='col originRow justify-content-evenly'>
-                            <span className='fs-4'>Carta de Origem:</span>
+                            <div className='d-flex origin-text'>
+                                <span className='fs-4'>Carta de Origem:</span>
+                                <span className='fs-6'>Quantas vezes foi usada: {origin1TimesUsed}</span>            
+                            </div>
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
                                 className='CardOrigin'
@@ -1686,8 +1716,36 @@ const Game = (props) => {
                                     />
                             ))}
                         </div>
+
+                        <div class="modal fade" id="OR1modalP2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="OR1modalP2Label" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="OR1modalP2Label">Selecione carta a descartar:</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        {player2Deck.filter(word => word.includes("R")).length > 0 && <>
+                                        {player2Deck.filter(word => word.includes("R")).map((item, i) => (
+                                            <a data-bs-dismiss="modal"><img
+                                                key={i}
+                                                className='Card'
+                                                onClick={() => onCardDrawnOR1Handler(item)}
+                                                src={require(`../assets/cards-front/${item}.png`).default}
+                                                /></a>
+                                        ))} </>}       
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>        
+
                         <div className='col originRow'>
-                            <span className='fs-3'>Carta de Origem:</span>
+                        <div className='d-flex origin-text'>
+                                <span className='fs-4'>Carta de Origem:</span>
+                                <span className='fs-6'>Quantas vezes foi usada: {origin2TimesUsed}</span>            
+                            </div>
                             
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
@@ -1698,8 +1756,8 @@ const Game = (props) => {
                                 {turn !== 'Player 2' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
                                 }
-                                {turn === 'Player 2' &&
-                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
+                                {turn === 'Player 2' && origin2TimesUsed <= 3 && player2Deck.filter(word => word.includes("R")).length > 0 &&
+                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player2Origin)} data-bs-toggle="modal" data-bs-target="#OR1modalP2">Usar efeito</button>
                                 }
                         </div>
                         </> }

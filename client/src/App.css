@@ -99,6 +99,11 @@ a {
   background-image: url('./assets/backgrounds/bgY.png');
 }
 
+.origin-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .CardOrigin {
   width: 13em;
   padding-left: 0.5em;
