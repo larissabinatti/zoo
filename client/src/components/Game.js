@@ -80,7 +80,7 @@ const Game = (props) => {
 
     const [isChatBoxHidden, setChatBoxHidden] = useState(true)
     const [isUnoButtonPressed, setUnoButtonPressed] = useState(false)
-    const [isSoundMuted, setSoundMuted] = useState(false)
+    const [isSoundMuted, setSoundMuted] = useState(true)
     const [isMusicMuted, setMusicMuted] = useState(true)
 
     const [playBBgMusic, { pause }] = useSound(bgMusic, { loop: true })
@@ -226,818 +226,862 @@ const Game = (props) => {
             })
         }
     }
+    
 
     //driver functions
     const onCardPlayedHandler = (played_card) => {
         //extract player who played the card
         const cardPlayedBy = turn
-        switch(played_card) {
-            //if card played was a number card
-            case '0R': case '1R': case '2R': case '3R': case '4R': case '5R': case '6R': case '7R': case '8R': case '9R': case '_R': case '0G': case '1G': case '2G': case '3G': case '4G': case '5G': case '6G': case '7G': case '8G': case '9G': case '_G': case '0B': case '1B': case '2B': case '3B': case '4B': case '5B': case '6B': case '7B': case '8B': case '9B': case '_B': case '0Y': case '1Y': case '2Y': case '3Y': case '4Y': case '5Y': case '6Y': case '7Y': case '8Y': case '9Y': case '_Y': {
-                //extract number and color of played card
-                const numberOfPlayedCard = played_card.charAt(0)
-                const colorOfPlayedCard = played_card.charAt(1)
-                //check for color match
-                if(currentColor === colorOfPlayedCard) {
-                    console.log('colors matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //then update turn, currentColor and currentNumber
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1)
-                            updatedPlayer1Deck.push(drawCard2)
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                turn: 'Player 2',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                turn: 'Player 2',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //then update turn, currentColor and currentNumber
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1)
-                            updatedPlayer2Deck.push(drawCard2)
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                turn: 'Player 1',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                turn: 'Player 1',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard
-                            })
-                        }
-                    }
-                }
-                //check for number match
-                else if(currentNumber === numberOfPlayedCard) {
-                    console.log('numbers matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //then update turn, currentColor and currentNumber
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1)
-                            updatedPlayer1Deck.push(drawCard2)
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                turn: 'Player 2',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                turn: 'Player 2',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //then update turn, currentColor and currentNumber
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1)
-                            updatedPlayer2Deck.push(drawCard2)
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                turn: 'Player 1',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playShufflingSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                turn: 'Player 1',
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: numberOfPlayedCard
-                            })
-                        }
-                    }
-                }
-                //if no color or number match, invalid move - do not update state
-                else {
-                    alert('Invalid Move!')
-                }
-                break;
-            }
-            //if card played was a skip card
-            case 'skipR': case 'skipG': case 'skipB': case 'skipY': {
-                //extract color of played skip card
-                const colorOfPlayedCard = played_card.charAt(4)
-                //check for color match
-                if(currentColor === colorOfPlayedCard) {
-                    console.log('colors matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //then update currentColor and currentNumber
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1)
-                            updatedPlayer1Deck.push(drawCard2)
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //then update currentColor and currentNumber
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1)
-                            updatedPlayer2Deck.push(drawCard2)
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404
-                            })
-                        }
-                    }
-                }
-                //check for number match - if skip card played on skip card
-                else if(currentNumber === 404) {
-                    console.log('Numbers matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1)
-                            updatedPlayer1Deck.push(drawCard2)
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //make a copy of drawCardPile array
-                            const copiedDrawCardPileArray = [...drawCardPile]
-                            //pull out last two elements from it
-                            const drawCard1 = copiedDrawCardPileArray.pop()
-                            const drawCard2 = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1)
-                            updatedPlayer2Deck.push(drawCard2)
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playSkipCardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 2'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 404
-                            })
-                        }
-                    }
-                }
-                //if no color or number match, invalid move - do not update state
-                else {
-                    alert('Invalid Move!')
-                }
-                break;
-            }
-            //if card played was a draw 2 card
-            case 'D2R': case 'D2G': case 'D2B': case 'D2Y': {
-                //extract color of played skip card
-                const colorOfPlayedCard = played_card.charAt(2)
-                //check for color match
-                if(currentColor === colorOfPlayedCard) {
-                    console.log('colors matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //pull out last two elements from drawCardPile
-                            const drawCard1X = copiedDrawCardPileArray.pop()
-                            const drawCard2X = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1X)
-                            updatedPlayer1Deck.push(drawCard2X)
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //pull out last two elements from drawCardPile
-                            const drawCard1X = copiedDrawCardPileArray.pop()
-                            const drawCard2X = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1X)
-                            updatedPlayer2Deck.push(drawCard2X)
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                    }
-                }
-                //check for number match - if draw 2 card played on draw 2 card
-                else if(currentNumber === 252) {                        
-                    console.log('number matched!')
-                    //check who played the card and return new state accordingly
-                    if(cardPlayedBy === 'Player 1') {
-                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                        //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player1Deck.indexOf(played_card)
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player1Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //pull out last two elements from drawCardPile
-                            const drawCard1X = copiedDrawCardPileArray.pop()
-                            const drawCard2X = copiedDrawCardPileArray.pop()
-                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                            updatedPlayer1Deck.push(drawCard1X)
-                            updatedPlayer1Deck.push(drawCard2X)
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...updatedPlayer1Deck],
-                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player1Deck),
-                                winner: checkWinner(player1Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                    }
-                    else {
-                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                        //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
-                        //then update currentColor and currentNumber - turn will remain same
-                        const removeIndex = player2Deck.indexOf(played_card)
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        //if two cards remaining check if player pressed UNO button
-                        //if not pressed add 2 cards as penalty
-                        if(player2Deck.length===2 && !isUnoButtonPressed) {
-                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                            //pull out last two elements from drawCardPile
-                            const drawCard1X = copiedDrawCardPileArray.pop()
-                            const drawCard2X = copiedDrawCardPileArray.pop()
-                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                            updatedPlayer2Deck.push(drawCard1X)
-                            updatedPlayer2Deck.push(drawCard2X)
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...updatedPlayer2Deck],
-                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                        else {
-                            !isSoundMuted && playDraw2CardSound()
-                            //send new state to server
-                            socket.emit('updateGameState', {
-                                gameOver: checkGameOver(player2Deck),
-                                winner: checkWinner(player2Deck, 'Player 1'),
-                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: colorOfPlayedCard,
-                                currentNumber: 252,
-                                drawCardPile: [...copiedDrawCardPileArray]
-                            })
-                        }
-                    }
-                }
-                //if no color or number match, invalid move - do not update state
-                else {
-                    alert('Invalid Move!')
-                }
-                break;
-            }
-            //if card played was a wild card
-            case 'W': {
-                //check who played the card and return new state accordingly
-                if(cardPlayedBy === 'Player 1') {
-                    //ask for new color
-                    const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
-                    //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                    const removeIndex = player1Deck.indexOf(played_card)
-                    //then update turn, currentColor and currentNumber
-                    //if two cards remaining check if player pressed UNO button
-                    //if not pressed add 2 cards as penalty
-                    if(player1Deck.length===2 && !isUnoButtonPressed) {
-                        alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                        updatedPlayer1Deck.push(drawCard1)
-                        updatedPlayer1Deck.push(drawCard2)
-                        !isSoundMuted && playWildCardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player1Deck),
-                            winner: checkWinner(player1Deck, 'Player 1'),
-                            turn: 'Player 2',
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player1Deck: [...updatedPlayer1Deck],
-                            currentColor: newColor,
-                            currentNumber: 300,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                    else {
-                        !isSoundMuted && playWildCardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player1Deck),
-                            winner: checkWinner(player1Deck, 'Player 1'),
-                            turn: 'Player 2',
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                            currentColor: newColor,
-                            currentNumber: 300
-                        })
-                    }
-                }
-                else {
-                    //ask for new color
-                    const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
-                    //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                    const removeIndex = player2Deck.indexOf(played_card)
-                    //then update turn, currentColor and currentNumber
-                    //if two cards remaining check if player pressed UNO button
-                    //if not pressed add 2 cards as penalty
-                    if(player2Deck.length===2 && !isUnoButtonPressed) {
-                        alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                        //make a copy of drawCardPile array
-                        const copiedDrawCardPileArray = [...drawCardPile]
-                        //pull out last two elements from it
-                        const drawCard1 = copiedDrawCardPileArray.pop()
-                        const drawCard2 = copiedDrawCardPileArray.pop()
-                        const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                        updatedPlayer2Deck.push(drawCard1)
-                        updatedPlayer2Deck.push(drawCard2)
-                        !isSoundMuted && playWildCardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player2Deck),
-                            winner: checkWinner(player2Deck, 'Player 2'),
-                            turn: 'Player 1',
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player2Deck: [...updatedPlayer2Deck],
-                            currentColor: newColor,
-                            currentNumber: 300,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                    else {
-                        !isSoundMuted && playWildCardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player2Deck),
-                            winner: checkWinner(player2Deck, 'Player 2'),
-                            turn: 'Player 1',
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                            currentColor: newColor,
-                            currentNumber: 300
-                        })
-                    }
-                }
-                break;
-            }
-            //if card played was a draw four wild card
-            case 'D4W': {
-                //check who played the card and return new state accordingly
-                if(cardPlayedBy === 'Player 1') {
-                    //ask for new color
-                    const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
-                    //remove the played card from player1's deck and add it to playedCardsPile (immutably)
-                    const removeIndex = player1Deck.indexOf(played_card)
-                    //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
-                    //make a copy of drawCardPile array
-                    const copiedDrawCardPileArray = [...drawCardPile]
-                    //pull out last four elements from it
-                    const drawCard1 = copiedDrawCardPileArray.pop()
-                    const drawCard2 = copiedDrawCardPileArray.pop()
-                    const drawCard3 = copiedDrawCardPileArray.pop()
-                    const drawCard4 = copiedDrawCardPileArray.pop()
-                    //then update currentColor and currentNumber - turn will remain same
-                    //if two cards remaining check if player pressed UNO button
-                    //if not pressed add 2 cards as penalty
-                    if(player1Deck.length===2 && !isUnoButtonPressed) {
-                        alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                        //pull out last two elements from drawCardPile
-                        const drawCard1X = copiedDrawCardPileArray.pop()
-                        const drawCard2X = copiedDrawCardPileArray.pop()
-                        const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
-                        updatedPlayer1Deck.push(drawCard1X)
-                        updatedPlayer1Deck.push(drawCard2X)
-                        !isSoundMuted && playDraw4CardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player1Deck),
-                            winner: checkWinner(player1Deck, 'Player 1'),
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player1Deck: [...updatedPlayer1Deck],
-                            player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                            currentColor: newColor,
-                            currentNumber: 600,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                    else {
-                        !isSoundMuted && playDraw4CardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player1Deck),
-                            winner: checkWinner(player1Deck, 'Player 1'),
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                            player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                            currentColor: newColor,
-                            currentNumber: 600,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                }
-                else {
-                    //ask for new color
-                    const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
-                    //remove the played card from player2's deck and add it to playedCardsPile (immutably)
-                    const removeIndex = player2Deck.indexOf(played_card)
-                    //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
-                    //make a copy of drawCardPile array
-                    const copiedDrawCardPileArray = [...drawCardPile]
-                    //pull out last four elements from it
-                    const drawCard1 = copiedDrawCardPileArray.pop()
-                    const drawCard2 = copiedDrawCardPileArray.pop()
-                    const drawCard3 = copiedDrawCardPileArray.pop()
-                    const drawCard4 = copiedDrawCardPileArray.pop()
-                    //then update currentColor and currentNumber - turn will remain same
-                    !isSoundMuted && playDraw4CardSound()
-                    //send new state to server
-                    socket.emit('updateGameState', {
-                        gameOver: checkGameOver(player2Deck),
-                        winner: checkWinner(player2Deck, 'Player 2'),
-                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                        player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                        player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                        currentColor: newColor,
-                        currentNumber: 600,
-                        drawCardPile: [...copiedDrawCardPileArray]
-                    })
-                    //if two cards remaining check if player pressed UNO button
-                    //if not pressed add 2 cards as penalty
-                    if(player2Deck.length===2 && !isUnoButtonPressed) {
-                        alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
-                        //pull out last two elements from drawCardPile
-                        const drawCard1X = copiedDrawCardPileArray.pop()
-                        const drawCard2X = copiedDrawCardPileArray.pop()
-                        const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
-                        updatedPlayer2Deck.push(drawCard1X)
-                        updatedPlayer2Deck.push(drawCard2X)
-                        !isSoundMuted && playDraw4CardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player2Deck),
-                            winner: checkWinner(player2Deck, 'Player 2'),
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player2Deck: [...updatedPlayer2Deck],
-                            player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                            currentColor: newColor,
-                            currentNumber: 600,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                    else {
-                        !isSoundMuted && playDraw4CardSound()
-                        //send new state to server
-                        socket.emit('updateGameState', {
-                            gameOver: checkGameOver(player2Deck),
-                            winner: checkWinner(player2Deck, 'Player 2'),
-                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                            player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                            player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                            currentColor: newColor,
-                            currentNumber: 600,
-                            drawCardPile: [...copiedDrawCardPileArray]
-                        })
-                    }
-                }
-            }
-            break;
+        console.log("entered card played ", played_card);
+        if(Array.isArray(played_card)) {
+            played_card = played_card[0];
         }
+        console.log("pos is array ", played_card);
+        if(played_card === 'OR1' || played_card === 'OR2' || played_card === 'OR3' || played_card === 'OR4' || played_card === 'OR5' || played_card === 'OR6') {
+            if(cardPlayedBy === 'Player 1') {
+                var timesUsed = origin1TimesUsed;
+                timesUsed++;
+                console.log("times used 1:", timesUsed);
+                // if(played_card === 'OR1') {
+                //     //glandulas mamarias
+                //     if(timesUsed <= 3) {
+                //         //remover 
+                //     }
+                //     else {
+                //         //desabilitar botao no front e dar algum feedback tipo nao mostrar mais carta origem
+                //         console.log("limite maximo de uso alcancado");
+                //     }
+                // }
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player1Deck),
+                    winner: checkWinner(player1Deck, 'Player 1'),
+                    turn: 'Player 2',
+                    origin1TimesUsed: timesUsed
+                })
+            }
+            else{
+                var times2Used = origin2TimesUsed;
+                times2Used++;
+                console.log("times used 2:", times2Used);
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player2Deck),
+                    winner: checkWinner(player2Deck, 'Player 2'),
+                    turn: 'Player 1',
+                    origin2TimesUsed: times2Used
+                })
+            }
+        }
+        else {
+            switch(played_card) {
+                //if card played was a number card
+                case '0R': case '1R': case '2R': case '3R': case '4R': case '5R': case '6R': case '7R': case '8R': case '9R': case '_R': case '0G': case '1G': case '2G': case '3G': case '4G': case '5G': case '6G': case '7G': case '8G': case '9G': case '_G': case '0B': case '1B': case '2B': case '3B': case '4B': case '5B': case '6B': case '7B': case '8B': case '9B': case '_B': case '0Y': case '1Y': case '2Y': case '3Y': case '4Y': case '5Y': case '6Y': case '7Y': case '8Y': case '9Y': case '_Y': {
+                    console.log('dentro do segundo caso switch');
+                    //extract number and color of played card
+                    const numberOfPlayedCard = played_card.charAt(0)
+                    const colorOfPlayedCard = played_card.charAt(1)
+                    //check for color match
+                    if(currentColor === colorOfPlayedCard) {
+                        console.log('colors matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //then update turn, currentColor and currentNumber
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1)
+                                updatedPlayer1Deck.push(drawCard2)
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    turn: 'Player 2',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    turn: 'Player 2',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //then update turn, currentColor and currentNumber
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1)
+                                updatedPlayer2Deck.push(drawCard2)
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    turn: 'Player 1',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    turn: 'Player 1',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard
+                                })
+                            }
+                        }
+                    }
+                    //check for number match
+                    else if(currentNumber === numberOfPlayedCard) {
+                        console.log('numbers matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //then update turn, currentColor and currentNumber
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1)
+                                updatedPlayer1Deck.push(drawCard2)
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    turn: 'Player 2',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    turn: 'Player 2',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //then update turn, currentColor and currentNumber
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1)
+                                updatedPlayer2Deck.push(drawCard2)
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    turn: 'Player 1',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playShufflingSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    turn: 'Player 1',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: numberOfPlayedCard
+                                })
+                            }
+                        }
+                    }
+                    //if no color or number match, invalid move - do not update state
+                    else {
+                        alert('Invalid Move!')
+                    }
+                    break;
+                }
+                //if card played was a skip card
+                case 'skipR': case 'skipG': case 'skipB': case 'skipY': {
+                    //extract color of played skip card
+                    const colorOfPlayedCard = played_card.charAt(4)
+                    //check for color match
+                    if(currentColor === colorOfPlayedCard) {
+                        console.log('colors matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //then update currentColor and currentNumber
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1)
+                                updatedPlayer1Deck.push(drawCard2)
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //then update currentColor and currentNumber
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1)
+                                updatedPlayer2Deck.push(drawCard2)
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404
+                                })
+                            }
+                        }
+                    }
+                    //check for number match - if skip card played on skip card
+                    else if(currentNumber === 404) {
+                        console.log('Numbers matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1)
+                                updatedPlayer1Deck.push(drawCard2)
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //make a copy of drawCardPile array
+                                const copiedDrawCardPileArray = [...drawCardPile]
+                                //pull out last two elements from it
+                                const drawCard1 = copiedDrawCardPileArray.pop()
+                                const drawCard2 = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1)
+                                updatedPlayer2Deck.push(drawCard2)
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playSkipCardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 404
+                                })
+                            }
+                        }
+                    }
+                    //if no color or number match, invalid move - do not update state
+                    else {
+                        alert('Invalid Move!')
+                    }
+                    break;
+                }
+                //if card played was a draw 2 card
+                case 'D2R': case 'D2G': case 'D2B': case 'D2Y': {
+                    //extract color of played skip card
+                    const colorOfPlayedCard = played_card.charAt(2)
+                    //check for color match
+                    if(currentColor === colorOfPlayedCard) {
+                        console.log('colors matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //pull out last two elements from drawCardPile
+                                const drawCard1X = copiedDrawCardPileArray.pop()
+                                const drawCard2X = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1X)
+                                updatedPlayer1Deck.push(drawCard2X)
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //pull out last two elements from drawCardPile
+                                const drawCard1X = copiedDrawCardPileArray.pop()
+                                const drawCard2X = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1X)
+                                updatedPlayer2Deck.push(drawCard2X)
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                        }
+                    }
+                    //check for number match - if draw 2 card played on draw 2 card
+                    else if(currentNumber === 252) {                        
+                        console.log('number matched!')
+                        //check who played the card and return new state accordingly
+                        if(cardPlayedBy === 'Player 1') {
+                            //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                            //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player1Deck.indexOf(played_card)
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player1Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //pull out last two elements from drawCardPile
+                                const drawCard1X = copiedDrawCardPileArray.pop()
+                                const drawCard2X = copiedDrawCardPileArray.pop()
+                                const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                                updatedPlayer1Deck.push(drawCard1X)
+                                updatedPlayer1Deck.push(drawCard2X)
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...updatedPlayer1Deck],
+                                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                        }
+                        else {
+                            //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                            //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
+                            //then update currentColor and currentNumber - turn will remain same
+                            const removeIndex = player2Deck.indexOf(played_card)
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            //if two cards remaining check if player pressed UNO button
+                            //if not pressed add 2 cards as penalty
+                            if(player2Deck.length===2 && !isUnoButtonPressed) {
+                                alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                                //pull out last two elements from drawCardPile
+                                const drawCard1X = copiedDrawCardPileArray.pop()
+                                const drawCard2X = copiedDrawCardPileArray.pop()
+                                const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                                updatedPlayer2Deck.push(drawCard1X)
+                                updatedPlayer2Deck.push(drawCard2X)
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...updatedPlayer2Deck],
+                                    player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                            else {
+                                !isSoundMuted && playDraw2CardSound()
+                                //send new state to server
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 1'),
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
+                                    currentColor: colorOfPlayedCard,
+                                    currentNumber: 252,
+                                    drawCardPile: [...copiedDrawCardPileArray]
+                                })
+                            }
+                        }
+                    }
+                    //if no color or number match, invalid move - do not update state
+                    else {
+                        alert('Invalid Move!')
+                    }
+                    break;
+                }
+                //if card played was a wild card
+                case 'W': {
+                    //check who played the card and return new state accordingly
+                    if(cardPlayedBy === 'Player 1') {
+                        //ask for new color
+                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                        const removeIndex = player1Deck.indexOf(played_card)
+                        //then update turn, currentColor and currentNumber
+                        //if two cards remaining check if player pressed UNO button
+                        //if not pressed add 2 cards as penalty
+                        if(player1Deck.length===2 && !isUnoButtonPressed) {
+                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                            updatedPlayer1Deck.push(drawCard1)
+                            updatedPlayer1Deck.push(drawCard2)
+                            !isSoundMuted && playWildCardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player1Deck),
+                                winner: checkWinner(player1Deck, 'Player 1'),
+                                turn: 'Player 2',
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player1Deck: [...updatedPlayer1Deck],
+                                currentColor: newColor,
+                                currentNumber: 300,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                        else {
+                            !isSoundMuted && playWildCardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player1Deck),
+                                winner: checkWinner(player1Deck, 'Player 1'),
+                                turn: 'Player 2',
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                currentColor: newColor,
+                                currentNumber: 300
+                            })
+                        }
+                    }
+                    else {
+                        //ask for new color
+                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                        const removeIndex = player2Deck.indexOf(played_card)
+                        //then update turn, currentColor and currentNumber
+                        //if two cards remaining check if player pressed UNO button
+                        //if not pressed add 2 cards as penalty
+                        if(player2Deck.length===2 && !isUnoButtonPressed) {
+                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                            //make a copy of drawCardPile array
+                            const copiedDrawCardPileArray = [...drawCardPile]
+                            //pull out last two elements from it
+                            const drawCard1 = copiedDrawCardPileArray.pop()
+                            const drawCard2 = copiedDrawCardPileArray.pop()
+                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                            updatedPlayer2Deck.push(drawCard1)
+                            updatedPlayer2Deck.push(drawCard2)
+                            !isSoundMuted && playWildCardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player2Deck),
+                                winner: checkWinner(player2Deck, 'Player 2'),
+                                turn: 'Player 1',
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player2Deck: [...updatedPlayer2Deck],
+                                currentColor: newColor,
+                                currentNumber: 300,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                        else {
+                            !isSoundMuted && playWildCardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player2Deck),
+                                winner: checkWinner(player2Deck, 'Player 2'),
+                                turn: 'Player 1',
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                currentColor: newColor,
+                                currentNumber: 300
+                            })
+                        }
+                    }
+                    break;
+                }
+                //if card played was a draw four wild card
+                case 'D4W': {
+                    //check who played the card and return new state accordingly
+                    if(cardPlayedBy === 'Player 1') {
+                        //ask for new color
+                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //remove the played card from player1's deck and add it to playedCardsPile (immutably)
+                        const removeIndex = player1Deck.indexOf(played_card)
+                        //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
+                        //make a copy of drawCardPile array
+                        const copiedDrawCardPileArray = [...drawCardPile]
+                        //pull out last four elements from it
+                        const drawCard1 = copiedDrawCardPileArray.pop()
+                        const drawCard2 = copiedDrawCardPileArray.pop()
+                        const drawCard3 = copiedDrawCardPileArray.pop()
+                        const drawCard4 = copiedDrawCardPileArray.pop()
+                        //then update currentColor and currentNumber - turn will remain same
+                        //if two cards remaining check if player pressed UNO button
+                        //if not pressed add 2 cards as penalty
+                        if(player1Deck.length===2 && !isUnoButtonPressed) {
+                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                            //pull out last two elements from drawCardPile
+                            const drawCard1X = copiedDrawCardPileArray.pop()
+                            const drawCard2X = copiedDrawCardPileArray.pop()
+                            const updatedPlayer1Deck = [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)]
+                            updatedPlayer1Deck.push(drawCard1X)
+                            updatedPlayer1Deck.push(drawCard2X)
+                            !isSoundMuted && playDraw4CardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player1Deck),
+                                winner: checkWinner(player1Deck, 'Player 1'),
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player1Deck: [...updatedPlayer1Deck],
+                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
+                                currentColor: newColor,
+                                currentNumber: 600,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                        else {
+                            !isSoundMuted && playDraw4CardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player1Deck),
+                                winner: checkWinner(player1Deck, 'Player 1'),
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
+                                currentColor: newColor,
+                                currentNumber: 600,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                    }
+                    else {
+                        //ask for new color
+                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //remove the played card from player2's deck and add it to playedCardsPile (immutably)
+                        const removeIndex = player2Deck.indexOf(played_card)
+                        //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
+                        //make a copy of drawCardPile array
+                        const copiedDrawCardPileArray = [...drawCardPile]
+                        //pull out last four elements from it
+                        const drawCard1 = copiedDrawCardPileArray.pop()
+                        const drawCard2 = copiedDrawCardPileArray.pop()
+                        const drawCard3 = copiedDrawCardPileArray.pop()
+                        const drawCard4 = copiedDrawCardPileArray.pop()
+                        //then update currentColor and currentNumber - turn will remain same
+                        !isSoundMuted && playDraw4CardSound()
+                        //send new state to server
+                        socket.emit('updateGameState', {
+                            gameOver: checkGameOver(player2Deck),
+                            winner: checkWinner(player2Deck, 'Player 2'),
+                            playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                            player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                            player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
+                            currentColor: newColor,
+                            currentNumber: 600,
+                            drawCardPile: [...copiedDrawCardPileArray]
+                        })
+                        //if two cards remaining check if player pressed UNO button
+                        //if not pressed add 2 cards as penalty
+                        if(player2Deck.length===2 && !isUnoButtonPressed) {
+                            alert('Oops! You forgot to press UNO. You drew 2 cards as penalty.')
+                            //pull out last two elements from drawCardPile
+                            const drawCard1X = copiedDrawCardPileArray.pop()
+                            const drawCard2X = copiedDrawCardPileArray.pop()
+                            const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
+                            updatedPlayer2Deck.push(drawCard1X)
+                            updatedPlayer2Deck.push(drawCard2X)
+                            !isSoundMuted && playDraw4CardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player2Deck),
+                                winner: checkWinner(player2Deck, 'Player 2'),
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player2Deck: [...updatedPlayer2Deck],
+                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
+                                currentColor: newColor,
+                                currentNumber: 600,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                        else {
+                            !isSoundMuted && playDraw4CardSound()
+                            //send new state to server
+                            socket.emit('updateGameState', {
+                                gameOver: checkGameOver(player2Deck),
+                                winner: checkWinner(player2Deck, 'Player 2'),
+                                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
+                                currentColor: newColor,
+                                currentNumber: 600,
+                                drawCardPile: [...copiedDrawCardPileArray]
+                            })
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        
     }
     
     const onCardDrawnHandler = () => {
@@ -1324,10 +1368,14 @@ const Game = (props) => {
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
                                 className='CardOrigin'
-                                onClick={() => onCardPlayedHandler(player1Origin)}
                                 src={require(`../assets/origin-cards/${player1Origin}.png`).default}
                                 /> }
-                            <button type="button" class="btn btn-dark pl-2">Usar efeito</button>
+                                {turn !== 'Player 1' &&
+                                    <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player1Origin)}>Usar efeito</button>
+                                }
+                                {turn === 'Player 1' &&
+                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player1Origin)}>Usar efeito</button>
+                                }
                         </div>
                         </> }
 
@@ -1389,7 +1437,12 @@ const Game = (props) => {
                                 onClick={() => onCardPlayedHandler(player2Origin)}
                                 src={require(`../assets/origin-cards/${player2Origin}.png`).default}
                                 /> }
-                            <button type="button" class="btn btn-dark pl-2">Usar efeito</button>
+                                {turn !== 'Player 2' &&
+                                    <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
+                                }
+                                {turn === 'Player 2' &&
+                                    <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
+                                }
                         </div>
                         </> }
                     </div> }
