@@ -1111,7 +1111,6 @@ const Game = (props) => {
             let numberOfDrawnCard = drawCard.charAt(0)
 
             if(colorOfDrawnCard === currentColor && (drawCard === 'skipR' || drawCard === 'skipG' || drawCard === 'skipB' || drawCard === 'skipY')) {
-                console.log("if1");
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
@@ -1128,7 +1127,6 @@ const Game = (props) => {
             }
             else if(colorOfDrawnCard === currentColor && (drawCard === 'D2R' || drawCard === 'D2G' || drawCard === 'D2B' || drawCard === 'D2Y')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
-                console.log("if2");
                 //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1148,7 +1146,6 @@ const Game = (props) => {
                 })
             }
             else if(drawCard === 'W') {
-                console.log("if3");
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
@@ -1164,7 +1161,6 @@ const Game = (props) => {
                 })
             }
             else if(drawCard === 'D4W') {
-                console.log("if4");
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
@@ -1190,7 +1186,6 @@ const Game = (props) => {
             }
             //if not action card - check if drawn card is playable
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
-                console.log("if5");
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
@@ -1205,9 +1200,6 @@ const Game = (props) => {
             }
             //else add the drawn card to player1's deck
             else {
-                console.log("ultimo caso");
-                console.log("deck pre remocao", player1NewDeck);
-                
                 //send new state to server
                 socket.emit('updateGameState', {
                     turn: 'Player 1',
@@ -1219,7 +1211,7 @@ const Game = (props) => {
         else {
             const remove2Index = player2Deck.indexOf(played_card)
             var player2NewDeck = [...player2Deck.slice(0, remove2Index), ...player2Deck.slice(remove2Index + 1)];
-            console.log("p2 deck before", player2NewDeck);
+
             //remove 1 new card from drawCardPile and add it to player2's deck (immutably)
             //make a copy of drawCardPile array
             const copiedDrawCardPileArray = [...drawCardPile]
@@ -1230,7 +1222,6 @@ const Game = (props) => {
             let numberOfDrawnCard = drawCard.charAt(0)
             if(colorOfDrawnCard === currentColor && (drawCard === 'skipR' || drawCard === 'skipG' || drawCard === 'skipB' || drawCard === 'skipY')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
-                console.log("p2 if1");
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
                 socket.emit('updateGameState', {
@@ -1244,7 +1235,7 @@ const Game = (props) => {
             }
             else if(colorOfDrawnCard === currentColor && (drawCard === 'D2R' || drawCard === 'D2G' || drawCard === 'D2B' || drawCard === 'D2Y')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
-                console.log("p2 if2");
+
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1260,13 +1251,11 @@ const Game = (props) => {
                     currentNumber: 252,
                     drawCardPile: [...copiedDrawCardPileArray],
                     turn: 'Player 2',
-                    player1Deck: player2NewDeck,
+                    player2Deck: player2NewDeck,
                 })
             }
-            //CHECAR SE ESTA CERTO O JOGADOR QUE DEVE JOGAR
             else if(drawCard === 'W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
-                console.log("p2 if3");
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 !isSoundMuted && playWildCardSound()
@@ -1282,7 +1271,6 @@ const Game = (props) => {
             }
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
-                console.log("p2 if4");
                 //ask for new color
                 const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
@@ -1307,7 +1295,7 @@ const Game = (props) => {
             }
             //if not action card - check if drawn card is playable
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
-                console.log("p2 if5");
+
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
@@ -1323,7 +1311,6 @@ const Game = (props) => {
             //else add the drawn card to player2's deck
             else {
                 !isSoundMuted && playShufflingSound()
-                console.log("p2 if4");
                 //send new state to server
                 socket.emit('updateGameState', {
                     turn: 'Player 2',
@@ -1543,19 +1530,8 @@ const Game = (props) => {
             {(!roomFull) ? <>
 
                 <div className='topInfo'>
-                    {/* <img src={require('../assets/logo-zoo.png').default} /> */}
                     <h1>Código da partida: {room}</h1>
-                    <span>
-                        {/* <button className='game-button green' onClick={() => setSoundMuted(!isSoundMuted)}>{isSoundMuted ? <span className="material-icons">volume_off</span> : <span className="material-icons">volume_up</span>}</button> */}
-                        {/* <button className='game-button green' onClick={() => {
-                            if(isMusicMuted)
-                                playBBgMusic()
-                            else
-                                pause()
-                            setMusicMuted(!isMusicMuted)
-                        }}>{isMusicMuted ? <span className="material-icons">music_off</span> : <span className="material-icons">music_note</span>}</button> */}
-                    </span>
-                </div>
+                </div>  
 
                 {/* PLAYER LEFT MESSAGES */}
                 {users.length===1 && currentUser === 'Player 2' && <h1 className='topInfoText'>Player 1 has left the game.</h1> }
