@@ -1,4 +1,4 @@
-<h1 align="center">Zo!o ONLINE</h1>
+<h1 align="center">Zoo! ONLINE</h1>
 <h2 align="center">Two player online game of Zoo!</h2>
 
 <img src="client/src/assets/logo-zoo.png" alt="Zoo! Logo" width="33%" align="center" />

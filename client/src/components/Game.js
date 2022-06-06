@@ -3,6 +3,7 @@
 /* eslint-disable default-case */
 import React, { useEffect, useState } from 'react'
 import PACK_OF_CARDS from '../utils/packOfCards'
+import PACK_OF_ZOO_CARDS from '../utils/cardsZoo'
 import PACK_OF_ORIGIN_CARDS from '../utils/originCards'
 import shuffleArray from '../utils/shuffleArray'
 import io from 'socket.io-client'
@@ -1553,7 +1554,7 @@ const Game = (props) => {
                                 <img
                                 className='CardOrigin'
                                 onClick={() => onCardPlayedHandler(player2Origin)}
-                                src={require(`../assets/origin-cards/${player2Origin}.png`).default}
+                                src={require(`../assets/origin-cards/${player2Origin}.svg`).default}
                                 /> }  
                         </div>    
                         <div className='player2Deck' style={{pointerEvents: 'none'}}>
@@ -1629,7 +1630,7 @@ const Game = (props) => {
                             {playedCardsPile && playedCardsPile.length>0 &&
                                 <img
                                 className='CardOrigin'
-                                src={require(`../assets/origin-cards/${player1Origin}.png`).default}
+                                src={require(`../assets/origin-cards/${player1Origin}.svg`).default}
                                 /> }
                                 {turn !== 'Player 1' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player1Origin)}>Usar efeito</button>
@@ -1651,7 +1652,7 @@ const Game = (props) => {
                                 <img
                                 className='CardOrigin'
                                 onClick={() => onCardPlayedHandler(player1Origin)}
-                                src={require(`../assets/origin-cards/${player1Origin}.png`).default}
+                                src={require(`../assets/origin-cards/${player1Origin}.svg`).default}
                                 /> }
                         </div>
                         <div className='player1Deck' style={{pointerEvents: 'none'}}>
@@ -1727,7 +1728,7 @@ const Game = (props) => {
                                 <img
                                 className='CardOrigin'
                                 onClick={() => onCardPlayedHandler(player2Origin)}
-                                src={require(`../assets/origin-cards/${player2Origin}.png`).default}
+                                src={require(`../assets/origin-cards/${player2Origin}.svg`).default}
                                 /> }
                                 {turn !== 'Player 2' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
