@@ -96,7 +96,7 @@ const Game = (props) => {
     //runs once on component mount
     useEffect(() => {
         //shuffle PACK_OF_CARDS array
-        const shuffledCards = shuffleArray(PACK_OF_CARDS)
+        const shuffledCards = shuffleArray(PACK_OF_ZOO_CARDS)
         const shuffledOriginCards = shuffleArray(PACK_OF_ORIGIN_CARDS)
         
         //extract first 7 elements to player1Deck
@@ -280,11 +280,12 @@ const Game = (props) => {
         else {
             switch(played_card) {
                 //if card played was a number card
-                case '0R': case '1R': case '2R': case '3R': case '4R': case '5R': case '6R': case '7R': case '8R': case '9R': case '_R': case '0G': case '1G': case '2G': case '3G': case '4G': case '5G': case '6G': case '7G': case '8G': case '9G': case '_G': case '0B': case '1B': case '2B': case '3B': case '4B': case '5B': case '6B': case '7B': case '8B': case '9B': case '_B': case '0Y': case '1Y': case '2Y': case '3Y': case '4Y': case '5Y': case '6Y': case '7Y': case '8Y': case '9Y': case '_Y': {
+                case '6R1': case '4R2': case '3R3': case '1R4': case '2R5': case '1B1': case '2B2': case '3B3': case '4B4': case '4B5': case '0Y1': case '1Y2': case '1Y3': case '0Y4': case '1Y5': case '5C1': case '1C2': case '1C3': case '3C4': case '1C5': case '4G1': case '4G2': case '4G3': case '4G4': case '1G5': case '1O1': case '1O2': case '4O3': case '4O4': case '7O5': case '1P1': case '7P2': case '1P3': case '1P4': case '3P5': case '1L1': case '1L2': case '1L3': case '4L4': case '1L5': {
                     console.log('dentro do segundo caso switch');
                     //extract number and color of played card
                     const numberOfPlayedCard = played_card.charAt(0)
                     const colorOfPlayedCard = played_card.charAt(1)
+
                     //check for color match
                     if(currentColor === colorOfPlayedCard) {
                         console.log('colors matched!')
@@ -1575,7 +1576,7 @@ const Game = (props) => {
                             {playedCardsPile && playedCardsPile.length>0 &&
                             <img
                                 className='Card'
-                                src={require(`../assets/cards-front/${playedCardsPile[playedCardsPile.length-1]}.png`).default}
+                                src={require(`../assets/cards-zoo/${playedCardsPile[playedCardsPile.length-1]}.svg`).default}
                                 /> }
                             
                             <button className='game-button orange' disabled={player1Deck.length !== 2} onClick={() => {
@@ -1591,7 +1592,7 @@ const Game = (props) => {
                                     key={i}
                                     className='Card'
                                     onClick={() => onCardPlayedHandler(item)}
-                                    src={require(`../assets/cards-front/${item}.png`).default}
+                                    src={require(`../assets/cards-zoo/${item}.svg`).default}
                                     />
                             ))}     
                         </div>
@@ -1609,7 +1610,7 @@ const Game = (props) => {
                                                 key={i}
                                                 className='Card'
                                                 onClick={() => onCardDrawnOR1Handler(item)}
-                                                src={require(`../assets/cards-front/${item}.png`).default}
+                                                src={require(`../assets/cards-zoo/${item}.svg`).default}
                                                 /></a>
                                         ))} </>}       
                                     </div>
@@ -1673,7 +1674,7 @@ const Game = (props) => {
                             {playedCardsPile && playedCardsPile.length>0 &&
                             <img
                                 className='Card'
-                                src={require(`../assets/cards-front/${playedCardsPile[playedCardsPile.length-1]}.png`).default}
+                                src={require(`../assets/cards-zoo/${playedCardsPile[playedCardsPile.length-1]}.svg`).default}
                                 /> }
                             
                             <button className='game-button orange' disabled={player2Deck.length !== 2} onClick={() => {
@@ -1689,7 +1690,7 @@ const Game = (props) => {
                                     key={i}
                                     className='Card'
                                     onClick={() => onCardPlayedHandler(item)}
-                                    src={require(`../assets/cards-front/${item}.png`).default}
+                                    src={require(`../assets/cards-zoo/${item}.svg`).default}
                                     />
                             ))}
                         </div>
@@ -1707,7 +1708,7 @@ const Game = (props) => {
                                                 key={i}
                                                 className='Card'
                                                 onClick={() => onCardDrawnOR1Handler(item)}
-                                                src={require(`../assets/cards-front/${item}.png`).default}
+                                                src={require(`../assets/cards-zoo/${item}.svg`).default}
                                                 /></a>
                                         ))} </>}       
                                     </div>
