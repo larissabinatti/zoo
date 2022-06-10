@@ -971,7 +971,7 @@ const Game = (props) => {
                     //check who played the card and return new state accordingly
                     if(cardPlayedBy === 'Player 1') {
                         //ask for new color
-                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                         //remove the played card from player1's deck and add it to playedCardsPile (immutably)
                         const removeIndex = player1Deck.indexOf(played_card)
                         //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
@@ -1001,7 +1001,7 @@ const Game = (props) => {
                                 playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
                                 player1Deck: [...updatedPlayer1Deck],
                                 player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: newColor,
+                                //currentColor: newColor,
                                 currentNumber: 600,
                                 drawCardPile: [...copiedDrawCardPileArray]
                             })
@@ -1015,7 +1015,7 @@ const Game = (props) => {
                                 playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
                                 player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
                                 player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                                currentColor: newColor,
+                              //  currentColor: newColor,
                                 currentNumber: 600,
                                 drawCardPile: [...copiedDrawCardPileArray]
                             })
@@ -1023,7 +1023,7 @@ const Game = (props) => {
                     }
                     else {
                         //ask for new color
-                        const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                        //const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                         //remove the played card from player2's deck and add it to playedCardsPile (immutably)
                         const removeIndex = player2Deck.indexOf(played_card)
                         //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
@@ -1043,7 +1043,7 @@ const Game = (props) => {
                             playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
                             player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
                             player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                            currentColor: newColor,
+                          // currentColor: newColor,
                             currentNumber: 600,
                             drawCardPile: [...copiedDrawCardPileArray]
                         })
@@ -1065,7 +1065,7 @@ const Game = (props) => {
                                 playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
                                 player2Deck: [...updatedPlayer2Deck],
                                 player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: newColor,
+                               // currentColor: newColor,
                                 currentNumber: 600,
                                 drawCardPile: [...copiedDrawCardPileArray]
                             })
@@ -1079,7 +1079,7 @@ const Game = (props) => {
                                 playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
                                 player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
                                 player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                                currentColor: newColor,
+                               // currentColor: newColor,
                                 currentNumber: 600,
                                 drawCardPile: [...copiedDrawCardPileArray]
                             })
@@ -1166,7 +1166,7 @@ const Game = (props) => {
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
-                const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+               // const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1180,7 +1180,7 @@ const Game = (props) => {
                 socket.emit('updateGameState', {
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                    currentColor: newColor,
+                   // currentColor: newColor,
                     currentNumber: 600,
                     drawCardPile: [...copiedDrawCardPileArray],
                     turn: 'Player 1',
@@ -1275,7 +1275,7 @@ const Game = (props) => {
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
-                const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                //const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1289,7 +1289,7 @@ const Game = (props) => {
                 socket.emit('updateGameState', {
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                    currentColor: newColor,
+                   // currentColor: newColor,
                     currentNumber: 600,
                     drawCardPile: [...copiedDrawCardPileArray],
                     turn: 'Player 2',
@@ -1384,7 +1384,7 @@ const Game = (props) => {
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
-                const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+                //const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1398,7 +1398,7 @@ const Game = (props) => {
                 socket.emit('updateGameState', {
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player2Deck.slice(player2Deck.length)],
-                    currentColor: newColor,
+                    //currentColor: newColor,
                     currentNumber: 600,
                     drawCardPile: [...copiedDrawCardPileArray]
                 })
@@ -1482,7 +1482,7 @@ const Game = (props) => {
             else if(drawCard === 'D4W') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
-                const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
+               // const newColor = prompt('Enter first letter of new color (R/G/B/Y)').toUpperCase()
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1496,7 +1496,7 @@ const Game = (props) => {
                 socket.emit('updateGameState', {
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, drawCard3, drawCard4, ...player1Deck.slice(player1Deck.length)],
-                    currentColor: newColor,
+                   // currentColor: newColor,
                     currentNumber: 600,
                     drawCardPile: [...copiedDrawCardPileArray]
                 })
