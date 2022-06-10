@@ -5,9 +5,9 @@
 
 ## ❓ About the Game
 
-This two-player online version of the game was built with [React](https://reactjs.org/), [Socket.IO](https://socket.io/), [Express](https://expressjs.com/), [Bootstrap](https://getbootstrap.com/) and [Node](https://nodejs.org/en/). It currently supports two-players in each game. It also has text chat functionality to communicate with your opponent!
+This two-player online version of the game was built with [React](https://reactjs.org/), [Socket.IO](https://socket.io/), [Express](https://expressjs.com/), [Bootstrap](https://getbootstrap.com/) and [Node](https://nodejs.org/en/). It currently supports two-players in each game.
 
-[git reference tutorial](https://github.com/mizanxali/uno-online)
+[git reference tutorial](https://github.com/mizanxali/uno-online) used as base to this project!
 
 ## 🧐 How to Play?
 
