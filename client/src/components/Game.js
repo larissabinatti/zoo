@@ -378,8 +378,10 @@ const Game = (props) => {
                             }
                         }
                     }
+
+                    //parasita ou
                     //check for number match
-                    else if(currentNumber === numberOfPlayedCard) {
+                    else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                         console.log('numbers matched!')
                         //check who played the card and return new state accordingly
                         if(cardPlayedBy === 'Player 1') {
