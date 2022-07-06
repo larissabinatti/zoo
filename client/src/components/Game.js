@@ -379,7 +379,7 @@ const Game = (props) => {
                         }
                     }
 //
-                    //parasita ou
+                    //fugivoro ou parasita
                     //check for number match
                     //else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) || (numberOfPlayedCard === '2' && (numberOfPlayedCard === '2' || numberOfPlayedCard === '4'))) {
                         else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '2' && (currentNumber === '4')) || (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
@@ -1430,7 +1430,7 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor ||  (numberOfDrawnCard === '2' && (currentNumber === '4')) || (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                 alert(`You drew ${drawCard} aqui. It was played for you.`)
                 console.log("comrprou cor ou numero igual")
                 !isSoundMuted && playShufflingSound()
@@ -1553,7 +1553,7 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor ||  (numberOfDrawnCard === '2' && (currentNumber === '4')) || (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou cor ou num igual");
                 !isSoundMuted && playShufflingSound()
