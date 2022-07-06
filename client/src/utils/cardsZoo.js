@@ -1,16 +1,29 @@
 //pack of 107 cards (_ = reverse)
 export default [
-  '6R', '4R', '3R', '1R', '2R', '6R', '4R', '3R', '1R', '2R', 'D2R', 'D2R',
-  '1B', '2B', '3B', '4B', '4B', '1B', '2B', '3B', '4B', '4B', 'D2B', 'D2B',
-  '0Y', '1Y', '1Y', '0Y', '1Y', '0Y', '1Y', '1Y', '0Y', '1Y', 'D2Y', 'D2Y',
-  '5GY', '1GY', '1GY', '3GY', '1GY', '5GY', '1GY', '1GY', '3GY', '1GY', 'D2GY', 'D2GY', 
-  '4G', '4G', '4G', '4G', '1G', '4G', '4G', '4G', '4G', '1G', 'D2G', 'D2G',
-  '1O', '1O', '4O', '4O', '7O','1O', '1O', '4O', '4O', '7O', 'D2O', 'D2O',
-  '1P', '7P', '1P', '1P', '3P','1P', '7P', '1P', '1P', '3P', 'D2P', 'D2P',
-  '1WB', '1WB', '1WB', '4WB', '1WB','1WB', '1WB', '1WB', '4WB', '1WB', 'D2WB', 'D2WB',
-  'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'D4W', 'D4W', 'D4W'
+  '6R1', '4R2', '3R3', '1R4', '2R5', '6R1', '4R2', '3R3', '1R4', '2R5', 'D2R', 'D2R', //red - mamifero
+  '1B1', '2B2', '3B3', '4B4', '4B5', '1B1', '2B2', '3B3', '4B4', '4B5', 'D2B', 'D2B', //dark blue - ave
+  '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', 'D2Y', 'D2Y', //yellow - aracnideo
+  '5C1', '1C2', '1C3', '3C4', '1C5', '5C1', '1C2', '1C3', '3C4', '1C5', 'D2C', 'D2C', //gray - cnidario
+  '4G1', '4G2', '4G3', '4G4', '1G5', '4G1', '4G2', '4G3', '4G4', '1G5', 'D2G', 'D2G', //green - inseto
+  '1O1', '1O2', '4O3', '4O4', '7O5','1O1', '1O2', '4O3', '4O4', '7O5', 'D2O', 'D2O', //orange - molusco
+  '1P1', '7P2', '1P3', '1P4', '3P5','1P1', '7P2', '1P3', '1P4', '3P5', 'D2P', 'D2P', //pink - peixe
+  '1L1', '1L2', '1L3', '4L4', '1L5','1L1', '1L2', '1L3', '4L4', '1L5', 'D2L', 'D2L', //light blue - reptil
+  'W1', 'W1', 'D4W', 'D4W', 'D4W', 'D4W', 'D4W', 'D4W', 'D4W', 'D4W', 'D4W'
+ // 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'D4W', 'D4W', 'D4W'
 ]
 
-//tipos de predacao: 0 (parasita), 1 (carnivoro), 2 (fugivoro), 3 (pscivoro),
+//GRAY = C
+
+//tipos de predacao: 0 (parasita), 1 (carnivoro), 2(fugivoro), 3 (pscivoro),
 //4 (herbivoro), 5 (simbiose), 6 (onivoro), 7 (filtrador)
 //w change color, d4w compra 4
+//os numeros dps sao as cartas em si segundo os arquivos de impressao
+
+//w1 cnidario
+//w2 peixe
+//w3 molusco
+//w4 reptil
+//w5 aracnideo
+//w6 mamifero
+//w7 inseto
+//w8 aves
