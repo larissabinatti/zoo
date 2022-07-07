@@ -344,11 +344,11 @@ const Game = (props) => {
                             }
                         }
                     }
-
-                    //fugivoro ou parasita ou piscivoro
-                    //check for number match
+                    //check for number match or
+                    //fugivoro ou piscivoro ou onivoro ou parasita 
                     else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '2' && (currentNumber === '4')) || 
                     (numberOfPlayedCard === '3' && (currentNumber === '1')) ||
+                    (numberOfPlayedCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
                     (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                         console.log('numbers matched!')
                         //check who played the card and return new state accordingly
@@ -958,7 +958,13 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
+            //check for number match or
+            //fugivoro ou piscivoro ou onivoro ou parasita 
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
+                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
@@ -981,7 +987,7 @@ const Game = (props) => {
                 })
             }
         }
-        else {
+        else { //player 2
             const remove2Index = player2Deck.indexOf(played_card)
             var player2NewDeck = [...player2Deck.slice(0, remove2Index), ...player2Deck.slice(remove2Index + 1)];
 
@@ -1054,7 +1060,13 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor) {
+            //check for number match or color match
+            //fugivoro ou piscivoro ou onivoro ou parasita 
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
+                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
 
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
@@ -1173,8 +1185,13 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor ||
-                (numberOfDrawnCard === '3' && (currentNumber === '1')) ||  (numberOfDrawnCard === '2' && (currentNumber === '4')) || (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+            //check for number match or
+            //fugivoro ou piscivoro ou onivoro ou parasita 
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
+                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                 alert(`You drew ${drawCard} aqui. It was played for you.`)
                 console.log("comrprou cor ou numero igual")
                 !isSoundMuted && playShufflingSound()
@@ -1284,8 +1301,13 @@ const Game = (props) => {
                 })
             }
             //if not action card - check if drawn card is playable
-            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor || (numberOfDrawnCard === '3' && (currentNumber === '1')) || 
-                (numberOfDrawnCard === '2' && (currentNumber === '4')) || (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+            //check for number match or
+            //fugivoro ou piscivoro ou onivoro ou parasita 
+            else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
+                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou cor ou num igual");
                 !isSoundMuted && playShufflingSound()
