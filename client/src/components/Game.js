@@ -29,8 +29,8 @@ import Header from './Header';
 
 
 let socket
-const ENDPOINT = 'http://localhost:5000'
-//const ENDPOINT = 'https://zoo-online-multiplayer.herokuapp.com/'
+//const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = 'https://glowing-rolypoly-5c5df9.netlify.app'
 
 const Game = (props) => {
     const data = queryString.parse(props.location.search)
