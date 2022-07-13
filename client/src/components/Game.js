@@ -30,7 +30,7 @@ import Header from './Header';
 
 let socket
 //const ENDPOINT = 'http://localhost:5000'
-const ENDPOINT = 'https://zooonline.netlify.app'
+const ENDPOINT = 'https://fierce-inlet-71587.herokuapp.com/'
 
 const Game = (props) => {
     const data = queryString.parse(props.location.search)
