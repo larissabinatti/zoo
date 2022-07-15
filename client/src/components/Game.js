@@ -1457,7 +1457,7 @@ const Game = (props) => {
                             {player2Deck.map((item, i) => (
                                 <img
                                     key={i}
-                                    className='Card'
+                                    className='opponentCard'
                                     onClick={() => onCardPlayedHandler(item)}
                                     src={require(`../assets/card-back.png`).default}
                                     />
@@ -1486,19 +1486,19 @@ const Game = (props) => {
                             }}>Zoo</button>
                         </div>
                         <br />
-                        {/* <OverlayScrollbarsComponent> */}
-                        <div className='player1Deck' id="p1" style={turn === 'Player 1' ? null : {pointerEvents: 'none'}}>
-                            <p className='playerDeckText'>Player 1</p>
-                            {player1Deck.map((item, i) => (
-                                <img
-                                    key={i}
-                                    className='Card'
-                                    onClick={() => onCardPlayedHandler(item)}
-                                    src={require(`../assets/cards-zoo/${item}.svg`).default}
-                                    />
-                            ))}     
-                        </div>
-                        {/* </OverlayScrollbarsComponent> */}
+                        <OverlayScrollbarsComponent>
+                            <div className='player1Deck' id="p1" style={turn === 'Player 1' ? null : {pointerEvents: 'none'}}>
+                                <p className='playerDeckText'>Player 1</p>
+                                {player1Deck.map((item, i) => (
+                                    <img
+                                        key={i}
+                                        className='Card'
+                                        onClick={() => onCardPlayedHandler(item)}
+                                        src={require(`../assets/cards-zoo/${item}.svg`).default}
+                                        />
+                                ))}     
+                            </div>
+                        </OverlayScrollbarsComponent>
 
                         <div class="modal fade" id="OR1modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="OR1modalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -1564,7 +1564,7 @@ const Game = (props) => {
                             {player1Deck.map((item, i) => (
                                 <img
                                     key={i}
-                                    className='Card'
+                                    className='opponentCard'
                                     onClick={() => onCardPlayedHandler(item)}
                                     src={require(`../assets/card-back.png`).default}
                                     />
@@ -1591,18 +1591,19 @@ const Game = (props) => {
                             }}>Zoo</button>
                         </div>
                         <br />
-                        <div className='player2Deck' style={turn === 'Player 1' ? {pointerEvents: 'none'} : null}>
-                            <p className='playerDeckText'>Player 2</p>
-                            {player2Deck.map((item, i) => (
-                                <img
-                                    key={i}
-                                    className='Card'
-                                    onClick={() => onCardPlayedHandler(item)}
-                                    src={require(`../assets/cards-zoo/${item}.svg`).default}
-                                    />
-                            ))}
-                        </div>
-
+                        <OverlayScrollbarsComponent className="direction-rtl">
+                            <div className='player2Deck' id="p2" style={turn === 'Player 1' ? {pointerEvents: 'none'} : null}>
+                                <p className='playerDeckText'>Player 2</p>
+                                {player2Deck.map((item, i) => (
+                                    <img
+                                        key={i}
+                                        className='Card'
+                                        onClick={() => onCardPlayedHandler(item)}
+                                        src={require(`../assets/cards-zoo/${item}.svg`).default}
+                                        />
+                                ))}
+                            </div>
+                        </OverlayScrollbarsComponent>
                         <div class="modal fade" id="OR1modalP2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="OR1modalP2Label" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
