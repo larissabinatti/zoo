@@ -208,51 +208,84 @@ const Game = (props) => {
 
     const onSimbiosePlayed = (played_card) => {
         const cardPlayedBy = turn
-        console.log("entered simbiose card played ", played_card);
-        console.log("played cards deck", playedCardsPile)
+
         if(Array.isArray(played_card)) {
             played_card = played_card[0];
         }
+
         if(shouldFilter1) {
-            console.log("player 1 deck", player1Deck)
-            const numberOfPlayedCard = played_card.charAt(0)
-            const colorOfPlayedCard = played_card.charAt(1)
-            const removeIndex = player1Deck.indexOf(played_card)
-            console.log("remove index", removeIndex)
-            console.log("shouldfilter 1 AAAAAAAA")
-            socket.emit('updateGameState', {
-                gameOver: checkGameOver(player1Deck),
-                winner: checkWinner(player1Deck, 'Player 1'),
-                turn: 'Player 2',
-                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                currentColor: colorOfPlayedCard,
-                currentNumber: numberOfPlayedCard,
-                shouldFilter1: false
-            })
-            console.log("shouldfilter1 onsimbiose", shouldFilter1)
-            console.log("p1 deck dps::::::::::::", player1Deck)
+            if(played_card === 'D2P' || played_card === 'D2O' || played_card === 'D2C') {
+                const colorOfPlayedCard = played_card.charAt(2)
+                const removeIndex = player1Deck.indexOf(played_card)
+                //make a copy of drawCardPile array
+                const copiedDrawCardPileArray = [...drawCardPile]
+                //pull out last two elements from it
+                const drawCard1 = copiedDrawCardPileArray.pop()
+                const drawCard2 = copiedDrawCardPileArray.pop()
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player1Deck),
+                    winner: checkWinner(player1Deck, 'Player 1'),
+                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                    player2Deck: [...player2Deck.slice(0, player2Deck.length), drawCard1, drawCard2, ...player2Deck.slice(player2Deck.length)],
+                    currentColor: colorOfPlayedCard,
+                    currentNumber: 252,
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    shouldFilter1: false
+                })
+            }
+            else {
+                const numberOfPlayedCard = played_card.charAt(0)
+                const colorOfPlayedCard = played_card.charAt(1)
+                const removeIndex = player1Deck.indexOf(played_card)
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player1Deck),
+                    winner: checkWinner(player1Deck, 'Player 1'),
+                    turn: 'Player 2',
+                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                    currentColor: colorOfPlayedCard,
+                    currentNumber: numberOfPlayedCard,
+                    shouldFilter1: false
+                })
+            }
         }
         else if (shouldFilter2){
-            const numberOfPlayedCard = played_card.charAt(0)
-            const colorOfPlayedCard = played_card.charAt(1)
-            const removeIndex = player2Deck.indexOf(played_card)
-            console.log("player 2 deck", player2Deck)
-            console.log("shouldfilter 2 BBBBBBBBB")
-            console.log("remove index", removeIndex)
-            socket.emit('updateGameState', {
-                gameOver: checkGameOver(player2Deck),
-                winner: checkWinner(player2Deck, 'Player 2'),
-                turn: 'Player 1',
-                playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                currentColor: colorOfPlayedCard,
-                currentNumber: numberOfPlayedCard,
-                shouldFilter2: false
-            })
-            console.log("shouldfilter2 onsimbiose", shouldFilter2)
-
-            console.log("p2   deck dps::::::::::::", player2Deck)
+            if(played_card === 'D2P' || played_card === 'D2O' || played_card === 'D2C') {
+                const colorOfPlayedCard = played_card.charAt(2)
+                const removeIndex = player2Deck.indexOf(played_card)
+                //make a copy of drawCardPile array
+                const copiedDrawCardPileArray = [...drawCardPile]
+                //pull out last two elements from it
+                const drawCard1 = copiedDrawCardPileArray.pop()
+                const drawCard2 = copiedDrawCardPileArray.pop()
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player2Deck),
+                    winner: checkWinner(player2Deck, 'Player 1'),
+                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                    player1Deck: [...player1Deck.slice(0, player1Deck.length), drawCard1, drawCard2, ...player1Deck.slice(player1Deck.length)],
+                    currentColor: colorOfPlayedCard,
+                    currentNumber: 252,
+                    drawCardPile: [...copiedDrawCardPileArray],
+                    shouldFilter2: false
+                })
+            } 
+            else {
+                const numberOfPlayedCard = played_card.charAt(0)
+                const colorOfPlayedCard = played_card.charAt(1)
+                const removeIndex = player2Deck.indexOf(played_card)
+                socket.emit('updateGameState', {
+                    gameOver: checkGameOver(player2Deck),
+                    winner: checkWinner(player2Deck, 'Player 2'),
+                    turn: 'Player 1',
+                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                    currentColor: colorOfPlayedCard,
+                    currentNumber: numberOfPlayedCard,
+                    shouldFilter2: false
+                })
+            }
         }
     }
 
@@ -264,9 +297,7 @@ const Game = (props) => {
         if(Array.isArray(played_card)) {
             played_card = played_card[0];
         }
-        console.log("cp should filter 1:::::", shouldFilter1)
-        console.log("cp should filter 2;;;;", shouldFilter2)
-        console.log("pos is array ", played_card);
+
         if(played_card === 'OR1' || played_card === 'OR2' || played_card === 'OR3' || played_card === 'OR4' || played_card === 'OR5' || played_card === 'OR6') {
             if(cardPlayedBy === 'Player 1') {
                 var timesUsed = origin1TimesUsed;
@@ -336,29 +367,67 @@ const Game = (props) => {
                                 updatedPlayer1Deck.push(drawCard1)
                                 updatedPlayer1Deck.push(drawCard2)
                                 !isSoundMuted && playShufflingSound()
+                                // check if played card is simbiose
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                    console.log("entered if cards p, o, c")
+                                    var test = player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
+                                    console.log("deck filtrado PLAYER1", test);
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player1Deck),
+                                        winner: checkWinner(player1Deck, 'Player 1'),
+                                        turn: 'Player 1',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        shouldFilter1: true
+                                    })
+                                    console.log("shouldfilter1 played", shouldFilter1)
+                                } else {
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player1Deck),
+                                        winner: checkWinner(player1Deck, 'Player 1'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player1Deck: [...updatedPlayer1Deck],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        drawCardPile: [...copiedDrawCardPileArray]
+                                    })
+                                }
                                 //send new state to server
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player1Deck),
-                                    winner: checkWinner(player1Deck, 'Player 1'),
-                                    turn: 'Player 2',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player1Deck: [...updatedPlayer1Deck],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard,
-                                    drawCardPile: [...copiedDrawCardPileArray]
-                                })
                             }
                             else {
-                                //send new state to server
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player1Deck),
-                                    winner: checkWinner(player1Deck, 'Player 1'),
-                                    turn: 'Player 2',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard
-                                })
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                    console.log("entered if cards p, o, c")
+                                    var test = player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
+                                    console.log("deck filtrado PLAYER1", test);
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player1Deck),
+                                        winner: checkWinner(player1Deck, 'Player 1'),
+                                        turn: 'Player 1',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        shouldFilter1: true
+                                    })
+                                    console.log("shouldfilter1 played", shouldFilter1)
+
+                                }
+                                else {
+
+                                    //send new state to server
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player1Deck),
+                                        winner: checkWinner(player1Deck, 'Player 1'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard
+                                    })
+                                }
                             }
                         }
                         else {
@@ -378,30 +447,68 @@ const Game = (props) => {
                                 updatedPlayer2Deck.push(drawCard1)
                                 updatedPlayer2Deck.push(drawCard2)
                                 !isSoundMuted && playShufflingSound()
-                                //send new state to server
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player2Deck),
-                                    winner: checkWinner(player2Deck, 'Player 2'),
-                                    turn: 'Player 1',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player2Deck: [...updatedPlayer2Deck],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard,
-                                    drawCardPile: [...copiedDrawCardPileArray]
-                                })
+                                if(numberOfPlayedCard === '5' && (player2Deck.filter(word => word.includes("P")).length > 0 || player2Deck.filter(word => word.includes("O")).length > 0 || player2Deck.filter(word => word.includes("C")).length > 0)) {
+                                    console.log("entered if cards p, o, c")
+                                    var test = player2Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
+                                    console.log("deck filtrado PLAYER 2", test);
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        shouldFilter2: true
+                                    })
+                                    console.log("shouldfilter2 played", shouldFilter2)
+
+                                } 
+                                else {
+                                    //send new state to server
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 1',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...updatedPlayer2Deck],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        drawCardPile: [...copiedDrawCardPileArray]
+                                    })
+                                }
                             }
                             else {
                                 !isSoundMuted && playShufflingSound()
-                                //send new state to server
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player2Deck),
-                                    winner: checkWinner(player2Deck, 'Player 2'),
-                                    turn: 'Player 1',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard
-                                })
+                                if(numberOfPlayedCard === '5' && (player2Deck.filter(word => word.includes("P")).length > 0 || player2Deck.filter(word => word.includes("O")).length > 0 || player2Deck.filter(word => word.includes("C")).length > 0)) {
+                                    console.log("entered if cards p, o, c")
+                                    var test = player2Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
+                                    console.log("deck filtrado PLAYER 2", test);
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        shouldFilter2: true
+                                    })
+                                    console.log("shouldfilter2 played", shouldFilter2)
+
+                                }
+                                else {
+                                    //send new state to server
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 1',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard
+                                    })
+                                }
                             }
                         }
                     }
@@ -433,6 +540,7 @@ const Game = (props) => {
                                 updatedPlayer1Deck.push(drawCard2)
                                 !isSoundMuted && playShufflingSound()
                                 //send new state to server
+                                //check if its simbiose
                                 if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
                                     socket.emit('updateGameState', {
                                         gameOver: checkGameOver(player1Deck),
@@ -446,16 +554,18 @@ const Game = (props) => {
                                         shouldFilter1: true
                                     })
                                 }
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player1Deck),
-                                    winner: checkWinner(player1Deck, 'Player 1'),
-                                    turn: 'Player 2',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player1Deck: [...updatedPlayer1Deck],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard,
-                                    drawCardPile: [...copiedDrawCardPileArray]
-                                })
+                                else {
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player1Deck),
+                                        winner: checkWinner(player1Deck, 'Player 1'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player1Deck: [...updatedPlayer1Deck],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        drawCardPile: [...copiedDrawCardPileArray]
+                                    })
+                                }
                             }
                             else {
                                 !isSoundMuted && playShufflingSound()
@@ -506,18 +616,37 @@ const Game = (props) => {
                                 const updatedPlayer2Deck = [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)]
                                 updatedPlayer2Deck.push(drawCard1)
                                 updatedPlayer2Deck.push(drawCard2)
-                                !isSoundMuted && playShufflingSound()
-                                //send new state to server
-                                socket.emit('updateGameState', {
-                                    gameOver: checkGameOver(player2Deck),
-                                    winner: checkWinner(player2Deck, 'Player 2'),
-                                    turn: 'Player 1',
-                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
-                                    player2Deck: [...updatedPlayer2Deck],
-                                    currentColor: colorOfPlayedCard,
-                                    currentNumber: numberOfPlayedCard,
-                                    drawCardPile: [...copiedDrawCardPileArray]
-                                })
+                                if(numberOfPlayedCard === '5' && (player2Deck.filter(word => word.includes("P")).length > 0 || player2Deck.filter(word => word.includes("O")).length > 0 || player2Deck.filter(word => word.includes("C")).length > 0)) {
+                                    console.log("entered if cards p, o, c")
+                                    var test = player2Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
+                                    console.log("deck filtrado PLAYER 2", test);
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 2',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        shouldFilter2: true
+                                    })
+                                    console.log("shouldfilter2 played", shouldFilter2)
+
+                                } 
+                                else {
+                                    !isSoundMuted && playShufflingSound()
+                                    //send new state to server
+                                    socket.emit('updateGameState', {
+                                        gameOver: checkGameOver(player2Deck),
+                                        winner: checkWinner(player2Deck, 'Player 2'),
+                                        turn: 'Player 1',
+                                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                        player2Deck: [...updatedPlayer2Deck],
+                                        currentColor: colorOfPlayedCard,
+                                        currentNumber: numberOfPlayedCard,
+                                        drawCardPile: [...copiedDrawCardPileArray]
+                                    })
+                                }
                             }
                             else {
                                 !isSoundMuted && playShufflingSound()
