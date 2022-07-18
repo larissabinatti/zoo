@@ -84,7 +84,7 @@ const Game = (props) => {
     const [isMusicMuted, setMusicMuted] = useState(true)
 
     const [playBBgMusic, { pause }] = useSound(bgMusic, { loop: true })
-    const [playzooSound] = useSound(shufflingSound)
+    const [playzooSound] = useSound(zooSound)
     const [playShufflingSound] = useSound(shufflingSound)
     const [playDraw2CardSound] = useSound(draw2CardSound)
     const [playWildCardSound] = useSound(wildCardSound)
@@ -368,7 +368,7 @@ const Game = (props) => {
                                 updatedPlayer1Deck.push(drawCard2)
                                 !isSoundMuted && playShufflingSound()
                                 // check if played card is simbiose
-                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
                                     console.log("entered if cards p, o, c")
                                     var test = player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
                                     console.log("deck filtrado PLAYER1", test);
@@ -398,7 +398,7 @@ const Game = (props) => {
                                 //send new state to server
                             }
                             else {
-                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
                                     console.log("entered if cards p, o, c")
                                     var test = player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
                                     console.log("deck filtrado PLAYER1", test);
@@ -541,7 +541,7 @@ const Game = (props) => {
                                 !isSoundMuted && playShufflingSound()
                                 //send new state to server
                                 //check if its simbiose
-                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
                                     socket.emit('updateGameState', {
                                         gameOver: checkGameOver(player1Deck),
                                         winner: checkWinner(player1Deck, 'Player 1'),
@@ -570,7 +570,7 @@ const Game = (props) => {
                             else {
                                 !isSoundMuted && playShufflingSound()
                                 //send new state to server
-                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 0)) {
+                                if(numberOfPlayedCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
                                     console.log("entered if cards p, o, c")
                                     var test = player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el)))
                                     console.log("deck filtrado PLAYER1", test);
