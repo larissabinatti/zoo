@@ -6,6 +6,7 @@
 ## ❓ About the Game
 
 This two-player online version of the game was built with [React](https://reactjs.org/), [Socket.IO](https://socket.io/), [Express](https://expressjs.com/), [Bootstrap](https://getbootstrap.com/) and [Node](https://nodejs.org/en/). It currently supports two-players in each game.
+You can play the online version of the game in: [zooonlinegame](https://zooonlinegame.netlify.app/)
 
 [git reference tutorial](https://github.com/mizanxali/uno-online) used as base to this project!
 
@@ -17,6 +18,7 @@ This two-player online version of the game was built with [React](https://reactj
 4. That's it! Enjoy the game and remember, no toxicity!
 
 ## 🎮 Screenshots
+<img src="screenshots/Screenshot-2.png" alt="Screenshot 1" width="75%" align="center" />
 <img src="screenshots/Screenshot-1.png" alt="Screenshot 1" width="75%" align="center" />
 
 ## 🏁 Getting Started (to run game locally)
@@ -31,7 +33,7 @@ Follow the steps below, after cloning the repository:
 
 **For Running:**
 
-- Change socket.IO endpoint on client side. To do this, go to `client/src/components/Game.js` and change line #26 from `const ENDPOINT = 'https://uno-online-multiplayer.herokuapp.com/'` to `const ENDPOINT = 'http://localhost:5000'`
+- Change socket.IO endpoint on client side. To do this, go to `client/src/components/Game.js` and change line #26 from `const ENDPOINT = 'https://fierce-inlet-71587.herokuapp.com/'` to `const ENDPOINT = 'http://localhost:5000'`
 
 ### ⏳ Installation
 

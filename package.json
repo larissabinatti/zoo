@@ -1,5 +1,5 @@
 {
-  "name": "uno-online",
+  "name": "zoo-online",
   "version": "1.0.0",
   "description": "Online multiplayer card game",
   "main": "server.js",
@@ -11,14 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mizanxali/uno-online.git"
+    "url": "https://github.com/larissabinatti/zoo/tree/master"
   },
-  "author": "Mizan Ali",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mizanxali/uno-online/issues"
-  },
-  "homepage": "https://github.com/mizanxali/uno-online#readme",
+  "author": "Larissa Binatti ",
+  "homepage": "https://github.com/larissabinatti/zoo#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",

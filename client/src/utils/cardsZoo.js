@@ -1,4 +1,4 @@
-//pack of 107 cards (_ = reverse)
+//pack of 109 cards (_ = reverse)
 export default [
   '6R1', '4R2', '3R3', '1R4', '2R5', '6R1', '4R2', '3R3', '1R4', '2R5', 'D2R', 'D2R', //red - mamifero
   '1B1', '2B2', '3B3', '4B4', '4B5', '1B1', '2B2', '3B3', '4B4', '4B5', 'D2B', 'D2B', //dark blue - ave
