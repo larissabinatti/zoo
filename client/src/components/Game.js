@@ -511,7 +511,7 @@ const Game = (props) => {
                         }
                     }
                     //check for number match or
-                    //fugivoro ou piscivoro ou onivoro ou parasita ou simbiose
+                    //fugivoro ou piscivoro ou onivoro ou parasita ou simbiose ou polvo
                     else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '2' && (currentNumber === '4')) || 
                     (numberOfPlayedCard === '3' && (currentNumber === '1')) ||
                     (numberOfPlayedCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
