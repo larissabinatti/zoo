@@ -5,7 +5,7 @@ export default [
   '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', 'D2Y', 'D2Y', //yellow - aracnideo
   '5C1', '1C2', '1C3', '3C4', '1C5', '5C1', '1C2', '1C3', '3C4', '1C5', 'D2C', 'D2C', //gray - cnidario
   '4G1', '4G2', '4G3', '4G4', '1G5', '4G1', '4G2', '4G3', '4G4', '1G5', 'D2G', 'D2G', //green - inseto
-  '1O1', '1O2', '4O3', '4O4', '7O5','1O1', '1O2', '4O3', '4O4', '7O5', 'D2O', 'D2O', //orange - molusco
+  '1O1', '1O1', '1O1', '1O1', '1O1','1O1', '1O1', '1O1', '4O4', '7O5', 'D2O', 'D2O', //orange - molusco
   '1P1', '7P2', '1P3', '1P4', '3P5','1P1', '7P2', '1P3', '1P4', '3P5', 'D2P', 'D2P', //pink - peixe
   '1L1', '1L2', '1L3', '4L4', '1L5','1L1', '1L2', '1L3', '4L4', '1L5', 'D2L', 'D2L', //light blue - reptil
   'W1', 'W1', 'W1', 'W1', 'W1', 'W1', 'W1', 'W1', 'D4W', 'D4W', 'D4W'
