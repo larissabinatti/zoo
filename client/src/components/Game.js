@@ -38,7 +38,6 @@ const Game = (props) => {
     const [roomFull, setRoomFull] = useState(false)
     const [users, setUsers] = useState([])
     const [currentUser, setCurrentUser] = useState('')
-    const [message, setMessage] = useState('')
 
     useEffect(() => {
         const connectionOptions =  {
@@ -83,7 +82,6 @@ const Game = (props) => {
     const [isSoundMuted, setSoundMuted] = useState(true)
     const [isMusicMuted, setMusicMuted] = useState(true)
 
-    const [playBBgMusic, { pause }] = useSound(bgMusic, { loop: true })
     const [playzooSound] = useSound(zooSound)
     const [playShufflingSound] = useSound(shufflingSound)
     const [playDraw2CardSound] = useSound(draw2CardSound)
@@ -513,13 +511,14 @@ const Game = (props) => {
                         }
                     }
                     //check for number match or
-                    //fugivoro ou piscivoro ou onivoro ou parasita ou simbiose
+                    //fugivoro ou piscivoro ou onivoro ou parasita ou simbiose ou polvo
                     else if(currentNumber === numberOfPlayedCard || (numberOfPlayedCard === '2' && (currentNumber === '4')) || 
                     (numberOfPlayedCard === '3' && (currentNumber === '1')) ||
                     (numberOfPlayedCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
                     (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
                     (numberOfPlayedCard === '5' && (currentNumber === '1')) ||
-                    (numberOfPlayedCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                    (numberOfPlayedCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                    (played_card === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
                         console.log('numbers matched!')
                         //check who played the card and return new state accordingly
                         if(cardPlayedBy === 'Player 1') {
@@ -1244,10 +1243,13 @@ const Game = (props) => {
             //check for number match or
             //fugivoro ou piscivoro ou onivoro ou parasita 
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
-                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                || currentNumber === numberOfDrawnCard || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
-                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (numberOfDrawnCard === '5' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (played_card === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
@@ -1359,10 +1361,13 @@ const Game = (props) => {
             //check for number match or color match
             //fugivoro ou piscivoro ou onivoro ou parasita 
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
-                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                || currentNumber === numberOfDrawnCard || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
-                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (numberOfDrawnCard === '5' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (played_card === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
 
                 alert(`You drew ${drawCard}. It was played for you.`)
                 !isSoundMuted && playShufflingSound()
@@ -1501,7 +1506,10 @@ const Game = (props) => {
                 || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
-                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (numberOfDrawnCard === '5' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (drawCard === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
                 alert(`You drew ${drawCard} aqui. It was played for you.`)
                 console.log("comrprou cor ou numero igual")
                 !isSoundMuted && playShufflingSound()
@@ -1629,7 +1637,10 @@ const Game = (props) => {
                 || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
-                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (numberOfDrawnCard === '5' && (currentNumber === '1')) ||
+                (numberOfDrawnCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                (drawCard === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou cor ou num igual");
                 !isSoundMuted && playShufflingSound()
