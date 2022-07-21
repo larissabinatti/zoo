@@ -38,7 +38,6 @@ const Game = (props) => {
     const [roomFull, setRoomFull] = useState(false)
     const [users, setUsers] = useState([])
     const [currentUser, setCurrentUser] = useState('')
-    const [message, setMessage] = useState('')
 
     useEffect(() => {
         const connectionOptions =  {
@@ -83,7 +82,6 @@ const Game = (props) => {
     const [isSoundMuted, setSoundMuted] = useState(true)
     const [isMusicMuted, setMusicMuted] = useState(true)
 
-    const [playBBgMusic, { pause }] = useSound(bgMusic, { loop: true })
     const [playzooSound] = useSound(zooSound)
     const [playShufflingSound] = useSound(shufflingSound)
     const [playDraw2CardSound] = useSound(draw2CardSound)
@@ -519,7 +517,8 @@ const Game = (props) => {
                     (numberOfPlayedCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
                     (numberOfPlayedCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
                     (numberOfPlayedCard === '5' && (currentNumber === '1')) ||
-                    (numberOfPlayedCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R'))) {
+                    (numberOfPlayedCard === '5' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
+                    (played_card === '1O1' && (currentColor === 'R' || currentColor === 'B' || currentColor === 'C' || currentColor === 'P' || currentColor === 'L'))) {
                         console.log('numbers matched!')
                         //check who played the card and return new state accordingly
                         if(cardPlayedBy === 'Player 1') {
