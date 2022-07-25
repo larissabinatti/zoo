@@ -207,6 +207,7 @@ const Game = (props) => {
     }
 
     const onSimbiosePlayed = (played_card) => {
+        console.log("onsimbioseplayed")
         const cardPlayedBy = turn
 
         if(Array.isArray(played_card)) {
@@ -1551,14 +1552,29 @@ const Game = (props) => {
                 alert(`You drew ${drawCard} aqui. It was played for you.`)
                 console.log("comrprou cor ou numero igual")
                 !isSoundMuted && playShufflingSound()
+                if(numberOfDrawnCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
+                    console.log("simbiose drawn p1")
+                    socket.emit('updateGameState', {
+                        gameOver: checkGameOver(player1Deck),
+                        winner: checkWinner(player1Deck, 'Player 1'),
+                        turn: 'Player 1',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray],
+                        shouldFilter1: true
+                    })
+                }
+                else {
                 //send new state to server
-                socket.emit('updateGameState', {
-                    turn: 'Player 2',
-                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
-                    currentColor: colorOfDrawnCard,
-                    currentNumber: numberOfDrawnCard,
-                    drawCardPile: [...copiedDrawCardPileArray]
-                })
+                    socket.emit('updateGameState', {
+                        turn: 'Player 2',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
             }
             //else add the drawn card to player1's deck
             else {
@@ -1682,14 +1698,29 @@ const Game = (props) => {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou cor ou num igual");
                 !isSoundMuted && playShufflingSound()
-                //send new state to server
-                socket.emit('updateGameState', {
-                    turn: 'Player 1',
-                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
-                    currentColor: colorOfDrawnCard,
-                    currentNumber: numberOfDrawnCard,
-                    drawCardPile: [...copiedDrawCardPileArray]
-                })
+                if(numberOfDrawnCard === '5' && (player2Deck.filter(word => word.includes("P")).length > 0 || player2Deck.filter(word => word.includes("O")).length > 0 || player2Deck.filter(word => word.includes("C")).length > 1)) {
+                    console.log("simbiose drawn p2")
+                    socket.emit('updateGameState', {
+                        gameOver: checkGameOver(player2Deck),
+                        winner: checkWinner(player2Deck, 'Player 2'),
+                        turn: 'Player 2',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray],
+                        shouldFilter2: true
+                    })
+                }
+                else {
+                    //send new state to server
+                    socket.emit('updateGameState', {
+                        turn: 'Player 1',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
             }
             //else add the drawn card to player2's deck
             else {
