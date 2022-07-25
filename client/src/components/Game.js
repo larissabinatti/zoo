@@ -311,7 +311,7 @@ const Game = (props) => {
                     socket.emit('updateGameState', {
                         origin1TimesUsed: timesUsed
                     })
-                    if(timesUsed <= 3) {
+                    if(timesUsed < 3) {
                         console.log("da pra tirar");
                     }
                     else {
@@ -329,7 +329,7 @@ const Game = (props) => {
                     socket.emit('updateGameState', {
                         origin2TimesUsed: times2Used
                     })
-                    if(timesUsed <= 3) {
+                    if(timesUsed < 3) {
                         console.log("da pra tirar");
                     }
                     else {
@@ -1871,7 +1871,7 @@ const Game = (props) => {
                                 {turn !== 'Player 1' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player1Origin)}>Usar efeito</button>
                                 }
-                                {turn === 'Player 1' && origin1TimesUsed <= 3 && player1Deck.filter(word => word.includes("R")).length > 0 &&
+                                {turn === 'Player 1' && origin1TimesUsed < 3 && player1Deck.filter(word => word.includes("R")).length > 0 &&
                                     <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player1Origin)} data-bs-toggle="modal" data-bs-target="#OR1modal">Usar efeito</button>
                                 }
                         </div>
@@ -1985,7 +1985,7 @@ const Game = (props) => {
                                 {turn !== 'Player 2' &&
                                     <button type="button" class="btn btn-dark pl-2" disabled onClick={() => onCardPlayedHandler(player2Origin)}>Usar efeito</button>
                                 }
-                                {turn === 'Player 2' && origin2TimesUsed <= 3 && player2Deck.filter(word => word.includes("R")).length > 0 &&
+                                {turn === 'Player 2' && origin2TimesUsed < 3 && player2Deck.filter(word => word.includes("R")).length > 0 &&
                                     <button type="button" class="btn btn-dark pl-2" onClick={() => onCardPlayedHandler(player2Origin)} data-bs-toggle="modal" data-bs-target="#OR1modalP2">Usar efeito</button>
                                 }
                         </div>

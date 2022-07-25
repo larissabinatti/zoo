@@ -1,7 +1,7 @@
 //pack of 109 cards (_ = reverse)
 export default [
   '6R1', '4R2', '3R3', '1R4', '2R5', '6R1', '4R2', '3R3', '1R4', '2R5', 'D2R', 'D2R', //red - mamifero
-  '1B1', '2B2', '3B3', '4B4', '4B5', '1B1', '2B2', '3B3', '4B4', '4B5', 'D2B', 'D2B', //dark blue - ave
+  '2R5', '2R5', '2R5', '2R5', '2R5', '2R5', '2R5', '2R5', '4B4', '4B5', 'D2B', 'D2B', //dark blue - ave
   '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', '0Y1', '1Y2', '1Y3', '0Y4', '1Y5', 'D2Y', 'D2Y', //yellow - aracnideo
   '5C1', '1C2', '1C3', '3C4', '1C5', '5C1', '1C2', '1C3', '3C4', '1C5', 'D2C', 'D2C', //gray - cnidario
   '4G1', '4G2', '4G3', '4G4', '1G5', '4G1', '4G2', '4G3', '4G4', '1G5', 'D2G', 'D2G', //green - inseto
