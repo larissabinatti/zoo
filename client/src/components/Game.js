@@ -201,10 +201,13 @@ const Game = (props) => {
     }
     
     const checkWinner = (arr, player) => {
-        return arr.length === 1 ? player : ''
+        const playerNumber = player.charAt(player.length - 1)
+        let playerPt = "Jogador " + playerNumber;
+        return arr.length === 1 ? playerPt : ''
     }
 
     const onSimbiosePlayed = (played_card) => {
+        console.log("onsimbioseplayed")
         const cardPlayedBy = turn
 
         if(Array.isArray(played_card)) {
@@ -1162,12 +1165,29 @@ const Game = (props) => {
 
             //pull out last element from it
             const drawCard = copiedDrawCardPileArray.pop()
-
+            console.log("drawn card:", drawCard);
+            let colorOfDrawnCard;
+            let numberOfDrawnCard;
             //extract number and color of drawn card
-            const colorOfDrawnCard = drawCard.charAt(drawCard.length - 1)
+            if(!isNumber(drawCard.charAt(1))){
+                colorOfDrawnCard = drawCard.charAt(1)
+                numberOfDrawnCard = drawCard.charAt(0)
+            }
+            else if(drawCard.charAt(1) === "2") {
+                colorOfDrawnCard = drawCard.charAt(2)
+                numberOfDrawnCard = 252
+            }
+            else if(drawCard.charAt(1) === "4"){
+                colorOfDrawnCard = drawCard.charAt(2)
+                numberOfDrawnCard = 600
+            }
+            else {
+                colorOfDrawnCard = drawCard.charAt(drawCard.length - 1)
+                numberOfDrawnCard = drawCard.charAt(0)
+            }
 
-            let numberOfDrawnCard = drawCard.charAt(0)
-
+            console.log("color drawn card:", colorOfDrawnCard);
+            console.log("numberOfDrawnCard drawn card:", numberOfDrawnCard);
             if(colorOfDrawnCard === currentColor && (drawCard === 'D2R' || drawCard === 'D2G' || drawCard === 'D2B' || drawCard === 'D2Y' || drawCard === 'D2C' || drawCard === 'D2O' || drawCard === 'D2P' || drawCard === 'D2L')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //remove 2 new cards from drawCardPile and add them to player2's deck (immutably)
@@ -1243,7 +1263,7 @@ const Game = (props) => {
             //check for number match or
             //fugivoro ou piscivoro ou onivoro ou parasita 
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
-                || currentNumber === numberOfDrawnCard || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                ||  (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
                 (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
@@ -1258,7 +1278,7 @@ const Game = (props) => {
                     currentColor: colorOfDrawnCard,
                     currentNumber: numberOfDrawnCard,
                     drawCardPile: [...copiedDrawCardPileArray],
-                    turn: 'Player 1',
+                    turn: 'Player 2',
                     player1Deck: player1NewDeck,
                 })
             }
@@ -1282,11 +1302,30 @@ const Game = (props) => {
             //pull out last element from it
             const drawCard = copiedDrawCardPileArray.pop()
             //extract number and color of drawn card
-            const colorOfDrawnCard = drawCard.charAt(drawCard.length - 1)
-            let numberOfDrawnCard = drawCard.charAt(0)
+            let colorOfDrawnCard;
+            let numberOfDrawnCard;
+            //extract number and color of drawn card
+            if(!isNumber(drawCard.charAt(1))){
+                colorOfDrawnCard = drawCard.charAt(1)
+                numberOfDrawnCard = drawCard.charAt(0)
+            }
+            else if(drawCard.charAt(1) === "2") {
+                colorOfDrawnCard = drawCard.charAt(2)
+                numberOfDrawnCard = 252
+            }
+            else if(drawCard.charAt(1) === "4"){
+                colorOfDrawnCard = drawCard.charAt(2)
+                numberOfDrawnCard = 600
+            }
+            else {
+                colorOfDrawnCard = drawCard.charAt(drawCard.length - 1)
+                numberOfDrawnCard = drawCard.charAt(0)
+            }
+
+            console.log("color drawn card:", colorOfDrawnCard);
+            console.log("numberOfDrawnCard drawn card:", numberOfDrawnCard);
             if(colorOfDrawnCard === currentColor && (drawCard === 'D2R' || drawCard === 'D2G' || drawCard === 'D2B' || drawCard === 'D2Y' || drawCard === 'D2C' || drawCard === 'D2O' || drawCard === 'D2P' || drawCard === 'D2L')) {
                 alert(`You drew ${drawCard}. It was played for you.`)
-
                 //remove 2 new cards from drawCardPile and add them to player1's deck (immutably)
                 //make a copy of drawCardPile array
                 const copiedDrawCardPileArray = [...drawCardPile]
@@ -1361,7 +1400,7 @@ const Game = (props) => {
             //check for number match or color match
             //fugivoro ou piscivoro ou onivoro ou parasita 
             else if(numberOfDrawnCard === currentNumber || colorOfDrawnCard === currentColor 
-                || currentNumber === numberOfDrawnCard || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
+                || (numberOfDrawnCard === '2' && (currentNumber === '4')) || 
                 (numberOfDrawnCard === '3' && (currentNumber === '1')) ||
                 (numberOfDrawnCard === '6' && (currentNumber !== '7' && currentNumber !== '0')) ||
                 (numberOfDrawnCard === '0' && (currentColor === 'P' || currentColor === 'L' || currentColor === 'B' || currentColor === 'R')) ||
@@ -1373,7 +1412,7 @@ const Game = (props) => {
                 !isSoundMuted && playShufflingSound()
                 //send new state to server
                 socket.emit('updateGameState', {
-                    turn: 'Player 2',
+                    turn: 'Player 1',
                     playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
                     currentColor: colorOfDrawnCard,
                     currentNumber: numberOfDrawnCard,
@@ -1513,14 +1552,29 @@ const Game = (props) => {
                 alert(`You drew ${drawCard} aqui. It was played for you.`)
                 console.log("comrprou cor ou numero igual")
                 !isSoundMuted && playShufflingSound()
+                if(numberOfDrawnCard === '5' && (player1Deck.filter(word => word.includes("P")).length > 0 || player1Deck.filter(word => word.includes("O")).length > 0 || player1Deck.filter(word => word.includes("C")).length > 1)) {
+                    console.log("simbiose drawn p1")
+                    socket.emit('updateGameState', {
+                        gameOver: checkGameOver(player1Deck),
+                        winner: checkWinner(player1Deck, 'Player 1'),
+                        turn: 'Player 1',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray],
+                        shouldFilter1: true
+                    })
+                }
+                else {
                 //send new state to server
-                socket.emit('updateGameState', {
-                    turn: 'Player 2',
-                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
-                    currentColor: colorOfDrawnCard,
-                    currentNumber: numberOfDrawnCard,
-                    drawCardPile: [...copiedDrawCardPileArray]
-                })
+                    socket.emit('updateGameState', {
+                        turn: 'Player 2',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
             }
             //else add the drawn card to player1's deck
             else {
@@ -1644,14 +1698,29 @@ const Game = (props) => {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou cor ou num igual");
                 !isSoundMuted && playShufflingSound()
-                //send new state to server
-                socket.emit('updateGameState', {
-                    turn: 'Player 1',
-                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
-                    currentColor: colorOfDrawnCard,
-                    currentNumber: numberOfDrawnCard,
-                    drawCardPile: [...copiedDrawCardPileArray]
-                })
+                if(numberOfDrawnCard === '5' && (player2Deck.filter(word => word.includes("P")).length > 0 || player2Deck.filter(word => word.includes("O")).length > 0 || player2Deck.filter(word => word.includes("C")).length > 1)) {
+                    console.log("simbiose drawn p2")
+                    socket.emit('updateGameState', {
+                        gameOver: checkGameOver(player2Deck),
+                        winner: checkWinner(player2Deck, 'Player 2'),
+                        turn: 'Player 2',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray],
+                        shouldFilter2: true
+                    })
+                }
+                else {
+                    //send new state to server
+                    socket.emit('updateGameState', {
+                        turn: 'Player 1',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: colorOfDrawnCard,
+                        currentNumber: numberOfDrawnCard,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
             }
             //else add the drawn card to player2's deck
             else {
@@ -1682,12 +1751,12 @@ const Game = (props) => {
                 </div>  
 
                 {/* PLAYER LEFT MESSAGES */}
-                {users.length===1 && currentUser === 'Player 2' && <h1 className='topInfoText'>Player 1 has left the game.</h1> }
+                {users.length===1 && currentUser === 'Player 2' && <h1 className='topInfoText'>Jogador 1 deixou o jogo.</h1> }
                 {users.length===1 && currentUser === 'Player 1' && <h1 className='topInfoText'>Aguardando jogador 2 juntar-se a partida.</h1> }
 
                 {users.length===2 && <>
 
-                    {gameOver ? <div>{winner !== '' && <><h1>GAME OVER</h1><h2>{winner} wins!</h2></>}</div> :
+                    {gameOver ? <div>{winner !== '' && <><h1>FIM DE JOGO</h1><h2>{winner} ganhou!</h2></>}</div> :
                     <div>
                         
                         {/* PLAYER 1 VIEW */}
@@ -1705,7 +1774,7 @@ const Game = (props) => {
                                 /> }  
                         </div>    
                         <div className='player2Deck' style={{pointerEvents: 'none'}}>
-                            <p className='playerDeckText'>Player 2</p>
+                            <p className='playerDeckText'>Jogador 2</p>
                             {player2Deck.map((item, i) => (
                                 <img
                                     key={i}
@@ -1740,7 +1809,7 @@ const Game = (props) => {
                         <br />
                         <OverlayScrollbarsComponent>
                             <div className='player1Deck' id="p1" style={turn === 'Player 1' ? null : {pointerEvents: 'none'}}>
-                                <p className='playerDeckText'>Player 1</p>
+                                <p className='playerDeckText'>Jogador 1</p>
                                 {shouldFilter1 && <>
                                 {player1Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el))).map((item, i) => (
                                             <img
@@ -1823,7 +1892,7 @@ const Game = (props) => {
                                 /> }
                         </div>
                         <div className='player1Deck' style={{pointerEvents: 'none'}}>
-                            <p className='playerDeckText'>Player 1</p>
+                            <p className='playerDeckText'>Jogador 1</p>
                             {player1Deck.map((item, i) => (
                                 <img
                                     key={i}
@@ -1856,7 +1925,7 @@ const Game = (props) => {
                         <br />
                         <OverlayScrollbarsComponent className="direction-rtl">
                             <div className='player2Deck' id="p2" style={turn === 'Player 1' ? {pointerEvents: 'none'} : null}>
-                                <p className='playerDeckText'>Player 2</p>
+                                <p className='playerDeckText'>Jogador 2</p>
                                 {shouldFilter2 && <>
                                 {player2Deck.filter(word => ["P", "O", "C"].some(el => word.includes(el))).map((item, i) => (
                                             <img
@@ -1923,7 +1992,7 @@ const Game = (props) => {
                         </> }
                     </div> }
                 </> }
-            </> : <h1>Room full</h1> }
+            </> : <h1>Sala cheia</h1> }
 
             <br />
             <a href='/'><button type="button" class="btn btn-danger">Sair</button></a>
