@@ -970,7 +970,7 @@ const Game = (props) => {
                     break;
                 }
                 //if card played was a wild card
-                case 'W1': {
+                case 'W1': case 'W2': {
                     //check who played the card and return new state accordingly
                     if(cardPlayedBy === 'Player 1') {
                         //ask for new color
@@ -1004,8 +1004,20 @@ const Game = (props) => {
                             })
                         }
                         else {
-                            if(currentColor === "C") { //if its a cnidario (gray), change turn order
+                            if(currentColor === "C" && played_card === "W1") { //if its a cnidario (gray), change turn order
                                 console.log("cnidario com troca cor");
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player1Deck),
+                                    winner: checkWinner(player1Deck, 'Player 1'),
+                                    turn: 'Player 1',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player1Deck: [...player1Deck.slice(0, removeIndex), ...player1Deck.slice(removeIndex + 1)],
+                                    currentColor: newColor,
+                                    currentNumber: 300
+                                })
+                            }
+                            else if(currentColor === "P" && played_card === "W2") { //if its a peixe, change turn order
+                                console.log("peixe com troca cor");
                                 socket.emit('updateGameState', {
                                     gameOver: checkGameOver(player1Deck),
                                     winner: checkWinner(player1Deck, 'Player 1'),
@@ -1064,7 +1076,19 @@ const Game = (props) => {
                             })
                         }
                         else {
-                            if(currentColor === "C") { //if its a cnidario (gray), change turn order
+                            if(currentColor === "C" && played_card === "W1") { //if its a cnidario (gray), change turn order
+                                socket.emit('updateGameState', {
+                                    gameOver: checkGameOver(player2Deck),
+                                    winner: checkWinner(player2Deck, 'Player 2'),
+                                    turn: 'Player 2',
+                                    playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), played_card, ...playedCardsPile.slice(playedCardsPile.length)],
+                                    player2Deck: [...player2Deck.slice(0, removeIndex), ...player2Deck.slice(removeIndex + 1)],
+                                    currentColor: newColor,
+                                    currentNumber: 300
+                                })
+                            }
+                            else if(currentColor === "P" && played_card === "W2") { //if its a peixe, change turn order
+                                console.log("peixe com troca cor");
                                 socket.emit('updateGameState', {
                                     gameOver: checkGameOver(player2Deck),
                                     winner: checkWinner(player2Deck, 'Player 2'),
@@ -1274,13 +1298,23 @@ const Game = (props) => {
                     player1Deck: player1NewDeck,
                 })
             }
-            else if(drawCard === 'W1') {
+            else if(drawCard === 'W1' || drawCard === 'W2') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
                 const newColor = prompt('Cores: R = vermelho, G = verde, B = azul, Y = amarelo, C = cinza, O = laranja, P = rosa, L = azul claro. Entre a letra da cor:(R/G/B/Y/C/O/P/L)').toUpperCase()
                 !isSoundMuted && playWildCardSound()
                 //send new state to server
-                if(currentColor === "C") { 
+                if(currentColor === "C" && drawCard === 'W1') { 
+                    socket.emit('updateGameState', {
+                        turn: 'Player 1',
+                        player1Deck: player1NewDeck,
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: newColor,
+                        currentNumber: 300,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
+                else if(currentColor === "P" && drawCard === 'W2') { 
                     socket.emit('updateGameState', {
                         turn: 'Player 1',
                         player1Deck: player1NewDeck,
@@ -1428,13 +1462,23 @@ const Game = (props) => {
                     player2Deck: player2NewDeck,
                 })
             }
-            else if(drawCard === 'W1') {
+            else if(drawCard === 'W1' || drawCard === 'W2') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 //ask for new color
                 const newColor = prompt('Cores: R = vermelho, G = verde, B = azul, Y = amarelo, C = cinza, O = laranja, P = rosa, L = azul claro. Entre a letra da cor:(R/G/B/Y/C/O/P/L)').toUpperCase()
                 !isSoundMuted && playWildCardSound()
                 //send new state to server
-                if(currentColor === "C") { 
+                if(currentColor === "C" && drawCard === 'W1') { 
+                    socket.emit('updateGameState', {
+                        turn: 'Player 2',
+                        player2Deck: player2NewDeck,
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: newColor,
+                        currentNumber: 300,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
+                else if(currentColor === "P" && drawCard === 'W2') { 
                     socket.emit('updateGameState', {
                         turn: 'Player 2',
                         player2Deck: player2NewDeck,
@@ -1590,14 +1634,14 @@ const Game = (props) => {
                     drawCardPile: [...copiedDrawCardPileArray]
                 })
             }
-            else if(drawCard === 'W1') {
+            else if(drawCard === 'W1' || drawCard === 'W2') {
                 alert(`You drew ${drawCard}. It was played for you.`)
                 console.log("comprou w1");
                 //ask for new color
                 const newColor = prompt('Cores: R = vermelho, G = verde, B = azul, Y = amarelo, C = cinza, O = laranja, P = rosa, L = azul claro. Entre a letra da cor:(R/G/B/Y/C/O/P/L)').toUpperCase()
                 !isSoundMuted && playWildCardSound()
                 //send new state to server
-                if(currentColor === "C") { //if its a cnidario (gray), change turn order
+                if(currentColor === "C" && drawCard === "W1") { //if its a cnidario (gray), change turn order
                     socket.emit('updateGameState', {
                         turn: 'Player 1',
                         playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
@@ -1606,6 +1650,15 @@ const Game = (props) => {
                         drawCardPile: [...copiedDrawCardPileArray]
                     })
                 } 
+                else if(currentColor === "P" && drawCard === "W2") { //if its a peixe, change turn order
+                    socket.emit('updateGameState', {
+                        turn: 'Player 1',
+                        playedCardsPile: [...playedCardsPile.slice(0, playedCardsPile.length), drawCard, ...playedCardsPile.slice(playedCardsPile.length)],
+                        currentColor: newColor,
+                        currentNumber: 300,
+                        drawCardPile: [...copiedDrawCardPileArray]
+                    })
+                }
                 else {
                     socket.emit('updateGameState', {
                         turn: 'Player 2',
