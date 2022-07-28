@@ -156,7 +156,7 @@ function Header(props) {
           <div class="container-fluid">
             <div className='logo-container'>
               <img src={require('../assets/logo-zoo.png').default} alt="" width="30" height="24"/>
-              <span class="navbar-brand mb-0 h1 headerbar pl-3">Zoo!</span>
+              <span class="navbar-brand mb-0 h1 headerbar pl-3">Zoo! Online</span>
             </div>
               <button class="btn btn-outline-dark" type="button"
                   data-bs-toggle="modal" data-bs-target="#exampleModal">Regras</button>
